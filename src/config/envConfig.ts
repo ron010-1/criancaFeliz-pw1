@@ -8,6 +8,8 @@ const envSchema = z.object({
   USERNAME_POSTGIS: z.string(),
   PASSWORD_POSTGIS: z.string(),
   DATABASE_POSTGIS: z.string(),
+  JWT_SECRET: z.string(),
+  JWT_EXPIRES: z.string()
 });
 
 export type Env = z.infer<typeof envSchema>;
