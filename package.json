@@ -1,0 +1,39 @@
+{
+  "name": "projeto-1-na-tora-team",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Project BD2",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx --watch ./src/server.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bancos-de-Dados-II/projeto-1-na-tora-team.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Bancos-de-Dados-II/projeto-1-na-tora-team/issues"
+  },
+  "homepage": "https://github.com/Bancos-de-Dados-II/projeto-1-na-tora-team#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "pg": "^8.16.0",
+    "pg-hstore": "^2.3.4",
+    "reflect-metadata": "^0.2.2",
+    "sequelize-typescript": "^2.1.6",
+    "zod": "^3.25.42"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.18",
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.29",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}
