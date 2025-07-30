@@ -18,8 +18,8 @@ export class AssistenteSocial extends Model<AssistenteSocial> {
     @Column(DataType.STRING)
     password!: string;
 
-    @Column(DataType.INTEGER)
-    telefone!: number;
+    @Column(DataType.STRING)
+    telefone!: string;
 
     @AllowNull(false)
     @Column(DataType.STRING)

@@ -1,6 +1,6 @@
 import {error} from 'console';
 import {Request, Response} from 'express';
-import BeneficiarioService from '../service/beneficiario-service';
+import BeneficiarioService from '../service/beneficiario.service';
 import { Beneficiario } from '../models/Beneficiario.model';
 
 export default class BeneficiarioController {
