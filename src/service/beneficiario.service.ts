@@ -1,6 +1,5 @@
 import { Beneficiario } from "../models/Beneficiario.model";
 
-
 export default class BeneficiarioService {
 
     static async getAllBeneficiarios() {
@@ -11,11 +10,11 @@ export default class BeneficiarioService {
         return await Beneficiario.create(beneficiarioData);
     };
 
-    static async getById(id: any){
+    static async getById(id: string){
         return await Beneficiario.findByPk(id);
     };
 
-    static async editBenefById(id: any, data: any){
+    static async editBenefById(id: string, data: any){
         const [updated] = await Beneficiario.update(data, {
             where : { uuid: id}
         });
@@ -26,7 +25,7 @@ export default class BeneficiarioService {
     };
 
 
-    static async deleteBenefById(id: any){
+    static async deleteBenefById(id: string){
         const beneficiario = await Beneficiario.findOne({
             where: { uuid: id } 
         });

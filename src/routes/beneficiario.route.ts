@@ -1,9 +1,9 @@
 import express, { Router } from 'express';
-import BeneficiarioController from '../controller/beneficiario-controller';
+import BeneficiarioController from '../controller/beneficiario.controller';
 
 const BenefRouter = express.Router();
 
-BenefRouter.get('/', BeneficiarioController.getBenefs);
+BenefRouter.get('/',BeneficiarioController.getBenefs);
 BenefRouter.get('/:id', BeneficiarioController.getBenefById);
 BenefRouter.patch('/:id', BeneficiarioController.editBenef);
 BenefRouter.post('/', BeneficiarioController.createBenefs);
