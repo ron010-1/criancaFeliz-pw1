@@ -3,17 +3,27 @@ import { env } from "../config/envConfig";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 export default function verifyToken(req: Request, res: Response, next: NextFunction) {
-    const token = req.headers["token"] as string;
-
-    if (!token) {
-        return res.sendStatus(401);
+    const authHeader = req.headers["authorization"];
+  
+    if (!authHeader) {
+      return res.status(401).json({ message: "Token não fornecido" });
     }
-
+  
+    const parts = authHeader.split(" ");
+    if (parts.length !== 2 || parts[0] !== "Bearer") {
+      return res.status(401).json({ message: "Formato inválido" });
+    }
+  
+    const token = parts[1];
+  
     try {
-        const payload = jwt.verify(token, env.JWT_SECRET) as JwtPayload;
-        req.userId = payload.sub as string;
-        next();
+      const payload = jwt.verify(token, env.JWT_SECRET) as JwtPayload;
+      // @ts-ignore
+      req.userId = payload.sub;
+      next();
     } catch (err) {
-        return res.sendStatus(401);
+      console.error("Erro no verify:", err);
+      return res.status(401).json({ message: "Token inválido ou expirado" });
     }
-}
+  }
+  
