@@ -18,6 +18,10 @@ export default class AssistenteSocialService {
     return await AssistenteSocial.findByPk(id);
   };
 
+  static async getByEmail(email: string) {
+    return await AssistenteSocial.findOne({ where: { email } });
+  }
+
   static async editAssistById(id: string, data: any){
     const [updated] = await AssistenteSocial.update(data, {
         where : { uuid: id}

@@ -6,6 +6,7 @@ export default class AssistenteSocialController {
 
     static createAssistenteSocial: RequestHandler = async (req, res) => {
         const { email, password, telefone, nome } = req.body;
+
         if (!email || !password || !telefone || !nome){
             res.status(400).json('Email, password, telefone e nome são obrigatórios');
         }
@@ -14,15 +15,19 @@ export default class AssistenteSocialController {
         const assistData = { email, password: hashPass, telefone, nome, adminId: req.userId };
 
         try {
-        const newAssist = await AssistenteSocialService.createAssistenteSocial(assistData);
-        res.status(201).json(newAssist);
+            const existingAssist = await AssistenteSocialService.getByEmail(email);
+            if (existingAssist) {
+                res.status(400).json('Este email já está cadastrado');
+            }
+            const newAssist = await AssistenteSocialService.createAssistenteSocial(assistData);
+            res.status(201).json(newAssist);
         } catch (err) {
-        console.error(err);
-        res.status(400).json('Erro ao cadastrar assistente!');
+            console.error(err);
+            res.status(400).json('Erro ao cadastrar assistente!');
         }
     };
-
-    static getAllAssistentes: RequestHandler = async (_req, res) => {
+    
+    static getAllAssistentes: RequestHandler = async (req, res) => {
         try {
         const assistentes = await AssistenteSocialService.getAllAssistentes();
         res.status(200).json(assistentes);
