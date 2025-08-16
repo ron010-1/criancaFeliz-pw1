@@ -18,6 +18,7 @@ export default class AssistenteSocialController {
             const existingAssist = await AssistenteSocialService.getByEmail(email);
             if (existingAssist) {
                 res.status(400).json('Este email já está cadastrado');
+                return;
             }
             const newAssist = await AssistenteSocialService.createAssistenteSocial(assistData);
             res.status(201).json(newAssist);
