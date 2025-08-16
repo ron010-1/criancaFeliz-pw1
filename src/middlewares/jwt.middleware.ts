@@ -6,12 +6,14 @@ export default function verifyToken(req: Request, res: Response, next: NextFunct
     const authHeader = req.headers["authorization"];
   
     if (!authHeader) {
-      return res.status(401).json({ message: "Token não fornecido" });
+      res.status(401).json({ message: "Token não fornecido" });
+      return;
     }
   
     const parts = authHeader.split(" ");
     if (parts.length !== 2 || parts[0] !== "Bearer") {
-      return res.status(401).json({ message: "Formato inválido" });
+      res.status(401).json({ message: "Formato inválido" });
+      return;
     }
   
     const token = parts[1];
@@ -23,7 +25,8 @@ export default function verifyToken(req: Request, res: Response, next: NextFunct
       next();
     } catch (err) {
       console.error("Erro no verify:", err);
-      return res.status(401).json({ message: "Token inválido ou expirado" });
+      res.status(401).json({ message: "Token inválido ou expirado" });
+      return;
     }
   }
   
