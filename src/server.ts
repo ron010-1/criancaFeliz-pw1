@@ -16,7 +16,7 @@ app.use('/assists', AssistenteRouter);
 app.use('/login', LoginRouter);
 
 app.listen(env.PORT, async () => {
+    await ConfigSequelize();
     await createDefaultAdmin();
-    ConfigSequelize();
     console.log(`🚀 Server is running at http://localhost:${env.PORT}`);
 });
