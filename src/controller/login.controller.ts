@@ -19,16 +19,16 @@ export default class LoginController {
 
     const user = adminFound || assistenteFound;
 
-    if (!user) return res.status(401).json({ message: 'Email inválido' });
+    if (!user) res.status(401).json({ message: 'Email inválido' });
 
-    const senhaValida = await validatePassword(password, user.password);
-    if (!senhaValida) return res.status(401).json({ message: 'Senha inválida' });
+    const senhaValida = await validatePassword(password, user?.password as string);
+    if (!senhaValida) res.status(401).json({ message: 'Senha inválida' });
     const token = jwt.sign(
-      { sub: user.uuid },
+      { sub: user?.uuid },
       env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
-    return res.status(200).json({ token });
+    res.status(200).json({ token });
   }
 }
