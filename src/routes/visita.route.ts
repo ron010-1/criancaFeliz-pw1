@@ -1,11 +1,11 @@
-import express, { Router } from 'express';
+import {Router} from 'express';
 import VisitaController from '../controller/visita.controller';
-import verifyToken from '../middlewares/jwt.middleware';
+import {verifyToken} from '../middlewares/verifyJwt.middleware';
 
-const visitaRouter = express.Router();
+const visitaRouter = Router();
+visitaRouter.use(verifyToken);
 
-visitaRouter.post('/',verifyToken,VisitaController.createVisita);
-visitaRouter.get('/',VisitaController.getAllvisitas);
-
+visitaRouter.post('/', VisitaController.createVisita);
+visitaRouter.get('/', VisitaController.getAllvisitas);
 
 export default visitaRouter;
