@@ -1,7 +1,5 @@
-import {error} from 'console';
 import {Request, Response} from 'express';
-import BeneficiarioService from '../service/beneficiario-service';
-import { Beneficiario } from '../models/Beneficiario.model';
+import BeneficiarioService from '../service/beneficiario.service';
 
 export default class BeneficiarioController {
     static async getBenefs(req: Request, res: Response) {
