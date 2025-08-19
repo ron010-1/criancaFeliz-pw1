@@ -1,7 +1,7 @@
 import {AllowNull, BelongsTo, Column, CreatedAt, DataType, ForeignKey, HasMany, Model, PrimaryKey, Table} from 'sequelize-typescript';
 import { Admin } from './Admin.model';
 import { Visita } from './Visita.model';
-//import { Beneficiario } from './Beneficiario.model';
+import { Beneficiario } from './Beneficiario.model';
 
 @Table({
     tableName: 'assistente_social',
@@ -35,6 +35,6 @@ export class AssistenteSocial extends Model<AssistenteSocial> {
     @HasMany(() => Visita)
     visitas!: Visita[];
 
-    //@HasMany(() => Beneficiario)
-    //beneficiarios!: Beneficiario[];
+    @HasMany(() => Beneficiario)
+    beneficiarios!: Beneficiario[];
 }

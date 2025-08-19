@@ -1,6 +1,6 @@
-import {Column, DataType, HasMany, Model, PrimaryKey, Table} from 'sequelize-typescript'; //BelongsToBelongsTo
+import {Column, DataType, HasMany, Model, PrimaryKey, Table,BelongsTo,ForeignKey} from 'sequelize-typescript';
 import {Visita} from './Visita.model';
-//import { AssistenteSocial } from './AssistenteSocial.model';
+import { AssistenteSocial } from './AssistenteSocial.model';
 
 @Table({
     tableName: 'beneficiario',
@@ -38,10 +38,10 @@ export class Beneficiario extends Model<Beneficiario> {
     @HasMany(() => Visita)
     visitas!: Visita[];
 
-    //@ForeignKey(() => AssistenteSocial)
-    //@Column(DataType.STRING)
-    //assistenteId!: string;
+    @ForeignKey(() => AssistenteSocial)
+    @Column(DataType.STRING)
+    assistenteId!: string;
 
-    //@BelongsTo(() => AssistenteSocial)
-    //assistente!: AssistenteSocial;
+    @BelongsTo(() => AssistenteSocial)
+    assistente!: AssistenteSocial;
 }

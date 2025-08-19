@@ -10,7 +10,7 @@ import { Beneficiario } from './Beneficiario.model';
 })
 export class Visita extends Model<Visita> {
     @PrimaryKey
-    @Column(DataType.STRING)
+    @Column({type: DataType.UUID, defaultValue: DataType.UUIDV4})
     uuid!: string;
 
     @Column(DataType.DATE)
