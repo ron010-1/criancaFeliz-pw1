@@ -1,10 +1,10 @@
-import { Router } from 'express';
+import {Router} from 'express';
 import AssistenteSocialController from '../controller/assisenteSocial.controller';
-import verifyToken from '../middlewares/jwt.middleware';
+import {verifyToken} from '../middlewares/verifyJwt.middleware';
 
 const AssistenteRouter = Router();
+AssistenteRouter.use(verifyToken);
 
-//@ts-ignore
-AssistenteRouter.post('/', verifyToken, AssistenteSocialController.createAssistenteSocial);
+AssistenteRouter.post('/', AssistenteSocialController.createAssistenteSocial);
 
 export default AssistenteRouter;

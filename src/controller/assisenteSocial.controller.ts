@@ -9,7 +9,7 @@ export default class AssistenteSocialController {
         const { email, password, telefone, nome } = req.body;
 
         if( !email || !password || !telefone || !nome){
-            return res.status(400).json('Email, password, telefone e nome sao obrigatorios');
+            res.status(400).json('Email, password, telefone e nome sao obrigatorios');
         }
         const hashPass = await hashPassword(password);
 
