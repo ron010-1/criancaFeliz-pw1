@@ -24,7 +24,7 @@ export default class VisitaService{
         };
     }
 
-    static async deleteBenefById(id: string){
+    static async deleteVisitaById(id: string){
         const visita = await Visita.findOne({
             where: { uuid: id } 
         });

@@ -1,5 +1,5 @@
-import { Table, Model, PrimaryKey, Column, DataType, BelongsTo, ForeignKey } from "sequelize-typescript";
-import { Visita } from "./Visita.model";
+import { AllowNull, BelongsTo, Column, DataType, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { Visita } from './Visita.model';
 
 @Table({
     tableName: 'imagem',
@@ -7,17 +7,18 @@ import { Visita } from "./Visita.model";
 })
 export class Imagem extends Model<Imagem> {
     @PrimaryKey
-    @Column(DataType.STRING)
+    @Column({ type: DataType.UUID, defaultValue: DataType.UUIDV4 })
     uuid!: string;
 
+    @AllowNull(false)
     @Column(DataType.STRING)
     url!: string;
 
+    
     @ForeignKey(() => Visita)
-    @Column(DataType.STRING)
-    visitaId!: string; 
+    @Column({ type: DataType.UUID })
+    visitaId!: string;
 
     @BelongsTo(() => Visita)
     visita!: Visita;
-    
 }
