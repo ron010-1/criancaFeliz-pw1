@@ -200,40 +200,32 @@ export default class VisitaController {
    *         description: Erro ao editar visita
    */
   static editVisita: RequestHandler = async (req: Request, res: Response) => {
-    const {
-      id,
-      date,
-      imagens,
-      evolucao,
-      acompanhamento_familiar,
-      estimulo_familiar,
-    } = req.body;
-
-    if (
-      !date ||
-      !evolucao ||
-      !acompanhamento_familiar ||
-      !estimulo_familiar ||
-      id
-    ) {
-      res.status(400).json("Preencha todos os campos");
+    const { id } = req.params; 
+    const { date, imagens, evolucao, acompanhamento_familiar, estimulo_familiar } = req.body;
+  
+    if (!id) {
+      res.status(400).json({ message: "ID da visita é obrigatório" });
     }
-
-    const visitaData = {
-      id,
-      date,
-      imagens,
-      evolucao,
-      acompanhamento_familiar,
-      estimulo_familiar,
-    };
-
+  
+    // Monta apenas os campos que foram enviados no body
+    const visitaData: any = {};
+    if (date !== undefined) visitaData.date = date;
+    if (imagens !== undefined) visitaData.imagens = imagens;
+    if (evolucao !== undefined) visitaData.evolucao = evolucao;
+    if (acompanhamento_familiar !== undefined) visitaData.acompanhamento_familiar = acompanhamento_familiar;
+    if (estimulo_familiar !== undefined) visitaData.estimulo_familiar = estimulo_familiar;
+  
     try {
-      const editVisita = await VisitaService.editVisitaById(id, visitaData);
-      res.status(201).json(editVisita);
+      const updatedVisita = await VisitaService.editVisitaById(id, visitaData);
+  
+      if (!updatedVisita) {
+        res.status(404).json({ message: "Visita não encontrada" });
+      }
+  
+      res.status(200).json(updatedVisita);
     } catch (err) {
       console.error(err);
-      res.status(400).json("Erro ao salvar visita!");
+      res.status(400).json({ message: "Erro ao atualizar visita!" });
     }
   };
 

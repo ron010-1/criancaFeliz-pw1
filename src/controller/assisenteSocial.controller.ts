@@ -1,4 +1,4 @@
-import { Request, Response, RequestHandler } from "express";
+import { Request, Response, RequestHandler, NextFunction } from "express";
 import { hashPassword } from "../utils/hashPassword";
 import AssistenteSocialService from "../service/assistenteSocial.service";
 
@@ -90,14 +90,14 @@ export default class AssistenteSocialController {
    */
   static getAllAssistentes: RequestHandler = async (
     req: Request,
-    res: Response
+    res: Response,
+    next: NextFunction
   ) => {
     try {
       const assistentes = await AssistenteSocialService.getAllAssistentes();
       res.status(200).json(assistentes);
     } catch (err) {
-      console.error(err);
-      res.status(500).json("Erro ao buscar assistentes!");
+      next(err); // manda para exceptionsVerify
     }
   };
 

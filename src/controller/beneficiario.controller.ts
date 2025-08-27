@@ -3,15 +3,20 @@ import BeneficiarioService from "../service/beneficiario.service";
 
 export default class BeneficiarioController {
   /**
-   * @openapi
-   * /beneficiarios:
+   * @swagger
+   * /benefs:
    *   get:
    *     summary: Listar todos os beneficiários
-   *     tags:
-   *       - Beneficiários
+   *     tags: [Beneficiários]
    *     responses:
    *       200:
    *         description: Lista de beneficiários retornada com sucesso
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: '#/components/schemas/Beneficiario'
    *       400:
    *         description: Nenhum beneficiário encontrado
    */
@@ -25,21 +30,25 @@ export default class BeneficiarioController {
   }
 
   /**
-   * @openapi
-   * /beneficiarios/{id}:
+   * @swagger
+   * /benefs/{id}:
    *   get:
    *     summary: Buscar beneficiário por ID
-   *     tags:
-   *       - Beneficiários
+   *     tags: [Beneficiários]
    *     parameters:
-   *       - name: id
-   *         in: path
+   *       - in: path
+   *         name: id
    *         required: true
    *         schema:
    *           type: string
+   *         example: "uuid-do-beneficiario"
    *     responses:
    *       200:
    *         description: Beneficiário encontrado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Beneficiario'
    *       400:
    *         description: ID inválido ou erro de busca
    *       404:
@@ -47,11 +56,9 @@ export default class BeneficiarioController {
    */
   static async getBenefById(req: Request, res: Response) {
     const { id } = req.params;
-
     if (!id) {
       res.status(400).json("O ID do beneficiário não foi identificado.");
     }
-
     try {
       const benef = await BeneficiarioService.getById(id);
       res.status(200).json(benef);
@@ -62,73 +69,31 @@ export default class BeneficiarioController {
   }
 
   /**
-   * @openapi
-   * /beneficiarios:
+   * @swagger
+   * /benefs:
    *   post:
    *     summary: Criar um novo beneficiário
-   *     tags:
-   *       - Beneficiários
+   *     tags: [Beneficiários]
    *     requestBody:
    *       required: true
    *       content:
    *         application/json:
    *           schema:
-   *             type: object
-   *             required:
-   *               - nome
-   *               - nome_responsavel
-   *               - data_nascimento
-   *               - location
-   *               - phone1
-   *               - phone2
-   *             properties:
-   *               nome:
-   *                 type: string
-   *                 example: "João Silva"
-   *               nome_responsavel:
-   *                 type: string
-   *                 example: "Maria Silva"
-   *               data_nascimento:
-   *                 type: string
-   *                 example: "2010-05-10"
-   *               location:
-   *                 type: string
-   *                 example: "Rua das Flores, 123"
-   *               phone1:
-   *                 type: string
-   *                 example: "(83) 99999-8888"
-   *               phone2:
-   *                 type: string
-   *                 example: "(83) 98888-7777"
+   *             $ref: '#/components/schemas/BeneficiarioInput'
    *     responses:
    *       201:
    *         description: Beneficiário criado com sucesso
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Beneficiario'
    *       400:
    *         description: Erro ao cadastrar beneficiário
    */
   static async createBenefs(req: Request, res: Response) {
-    const {
-      nome,
-      nome_responsavel,
-      data_nascimento,
-      location,
-      phone1,
-      phone2,
-    } = req.body;
-
-    if (
-      !nome ||
-      !nome_responsavel ||
-      !data_nascimento ||
-      !location ||
-      !phone1 ||
-      !phone2
-    ) {
-      res
-        .status(400)
-        .json(
-          "Nome, Nome do Responsável, Data de Nascimento ou Localização não foi especificado."
-        );
+    const { nome, nome_responsavel, data_nascimento, location, phone1, phone2 } = req.body;
+    if (!nome || !nome_responsavel || !data_nascimento || !location || !phone1 || !phone2) {
+      res.status(400).json("Campos obrigatórios não informados.");
     }
     try {
       const newBenef = await BeneficiarioService.insertBeneficiario(req.body);
@@ -140,15 +105,14 @@ export default class BeneficiarioController {
   }
 
   /**
-   * @openapi
-   * /beneficiarios/{id}:
+   * @swagger
+   * /benefs/{id}:
    *   put:
    *     summary: Editar um beneficiário
-   *     tags:
-   *       - Beneficiários
+   *     tags: [Beneficiários]
    *     parameters:
-   *       - name: id
-   *         in: path
+   *       - in: path
+   *         name: id
    *         required: true
    *         schema:
    *           type: string
@@ -157,33 +121,22 @@ export default class BeneficiarioController {
    *       content:
    *         application/json:
    *           schema:
-   *             type: object
-   *             properties:
-   *               nome:
-   *                 type: string
-   *               nome_responsavel:
-   *                 type: string
-   *               data_nascimento:
-   *                 type: string
-   *               location:
-   *                 type: string
-   *               phone1:
-   *                 type: string
-   *               phone2:
-   *                 type: string
+   *             $ref: '#/components/schemas/BeneficiarioInput'
    *     responses:
    *       200:
    *         description: Beneficiário atualizado com sucesso
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Beneficiario'
    *       400:
    *         description: Erro ao editar beneficiário
    */
   static async editBenef(req: Request, res: Response) {
     const { id } = req.params;
-
     if (!id) {
       res.status(400).json("O ID do beneficiário não foi identificado.");
     }
-
     try {
       const benefEdited = await BeneficiarioService.editBenefById(id, req.body);
       res.status(200).json(benefEdited);
@@ -194,15 +147,14 @@ export default class BeneficiarioController {
   }
 
   /**
-   * @openapi
-   * /beneficiarios/{id}:
+   * @swagger
+   * /benefs/{id}:
    *   delete:
    *     summary: Excluir beneficiário por ID
-   *     tags:
-   *       - Beneficiários
+   *     tags: [Beneficiários]
    *     parameters:
-   *       - name: id
-   *         in: path
+   *       - in: path
+   *         name: id
    *         required: true
    *         schema:
    *           type: string
@@ -216,20 +168,16 @@ export default class BeneficiarioController {
    */
   static deleteBenef = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
-
     if (!id) {
       res.status(400).json("O ID do beneficiário não foi identificado.");
       return;
     }
-
     try {
       const beneficiario = await BeneficiarioService.getById(id);
-
       if (!beneficiario) {
         res.status(404).json("Beneficiário não encontrado.");
         return;
       }
-
       await beneficiario.destroy();
       res.status(200).json("Beneficiário excluído!");
     } catch (error) {

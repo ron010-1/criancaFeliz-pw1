@@ -6,59 +6,31 @@ const visitaRouter = Router();
 visitaRouter.use(verifyToken);
 
 /**
- * @openapi
+ * @swagger
  * /visitas:
  *   post:
  *     summary: Criar uma nova visita
- *     tags:
- *       - Visitas
- *     security:
- *       - bearerAuth: []
+ *     tags: [Visitas]
  *     requestBody:
- *       description: Dados da visita a serem criados
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - date
- *               - evolucao
- *               - acompanhamento_familiar
- *               - estimulo_familiar
- *               - beneficiarioId
- *             properties:
- *               date:
- *                 type: string
- *                 format: date
- *                 example: "2025-08-27"
- *               imagens:
- *                 type: array
- *                 items:
- *                   type: string
- *                 example: ["https://img.com/foto1.png"]
- *               evolucao:
- *                 type: string
- *                 example: "Paciente estável."
- *               acompanhamento_familiar:
- *                 type: string
- *                 example: "Família presente."
- *               estimulo_familiar:
- *                 type: string
- *                 example: "Família estimula paciente em casa."
- *               beneficiarioId:
- *                 type: string
- *                 example: "uuid-do-beneficiario"
+ *             $ref: '#/components/schemas/VisitaInput'
  *     responses:
  *       201:
  *         description: Visita criada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Visita'
  *       400:
  *         description: Erro ao salvar visita
  */
 visitaRouter.post('/', verifyToken, VisitaController.createVisita);
 
 /**
- * @openapi
+ * @swagger
  * /visitas:
  *   get:
  *     summary: Listar todas as visitas
@@ -74,4 +46,81 @@ visitaRouter.post('/', verifyToken, VisitaController.createVisita);
  */
 visitaRouter.get('/', verifyToken, VisitaController.getAllvisitas);
 
+/**
+ * @swagger
+ * /visitas/{id}:
+ *   get:
+ *     summary: Buscar uma visita pelo ID
+ *     tags:
+ *       - Visitas
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID da visita
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Visita encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Visita'
+ *       404:
+ *         description: Visita não encontrada
+ */
+visitaRouter.get('/:id', verifyToken, VisitaController.getVisitasById);
+
+/**
+ * @swagger
+ * /visitas/{id}:
+ *   put:
+ *     summary: Atualizar uma visita pelo ID
+ *     tags:
+ *       - Visitas
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID da visita
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/VisitaInput'
+ *     responses:
+ *       200:
+ *         description: Visita atualizada com sucesso
+ *       400:
+ *         description: Erro ao atualizar visita
+ *       404:
+ *         description: Visita não encontrada
+ */
+visitaRouter.patch('/:id', verifyToken, VisitaController.editVisita);
+
+/**
+ * @swagger
+ * /visitas/{id}:
+ *   delete:
+ *     summary: Deletar uma visita pelo ID
+ *     tags:
+ *       - Visitas
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID da visita
+ *         schema:
+ *           type: string
+ *     responses:
+ *       204:
+ *         description: Visita deletada com sucesso
+ *       404:
+ *         description: Visita não encontrada
+ */
+visitaRouter.delete('/:id', verifyToken, VisitaController.deleteById);
 export default visitaRouter;

@@ -6,29 +6,40 @@ const BenefRouter = Router();
 BenefRouter.use(verifyToken);
 
 /**
- * @openapi
+ * @swagger
+ * tags:
+ *   name: Beneficiários
+ *   description: Endpoints de gerenciamento de beneficiários
+ */
+
+/**
+ * @swagger
  * /benefs:
  *   get:
  *     summary: Listar todos os beneficiários
- *     tags:
- *       - Beneficiários
+ *     tags: [Beneficiários]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Lista de beneficiários retornada
+ *         description: Lista de beneficiários retornada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Beneficiario'
  *       400:
  *         description: Nenhum beneficiário encontrado
  */
-BenefRouter.get('/', verifyToken, BeneficiarioController.getBenefs);
+BenefRouter.get('/', BeneficiarioController.getBenefs);
 
 /**
- * @openapi
+ * @swagger
  * /benefs/{id}:
  *   get:
  *     summary: Buscar beneficiário por ID
- *     tags:
- *       - Beneficiários
+ *     tags: [Beneficiários]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -41,18 +52,21 @@ BenefRouter.get('/', verifyToken, BeneficiarioController.getBenefs);
  *     responses:
  *       200:
  *         description: Beneficiário encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Beneficiario'
  *       400:
- *         description: ID não informado ou erro ao buscar beneficiário
+ *         description: ID não informado ou erro ao buscar
  */
-BenefRouter.get('/:id', verifyToken, BeneficiarioController.getBenefById);
+BenefRouter.get('/:id', BeneficiarioController.getBenefById);
 
 /**
- * @openapi
+ * @swagger
  * /benefs:
  *   post:
  *     summary: Criar um novo beneficiário
- *     tags:
- *       - Beneficiários
+ *     tags: [Beneficiários]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -61,49 +75,25 @@ BenefRouter.get('/:id', verifyToken, BeneficiarioController.getBenefById);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - nome
- *               - nome_responsavel
- *               - data_nascimento
- *               - location
- *               - phone1
- *               - phone2
- *             properties:
- *               nome:
- *                 type: string
- *                 example: "João da Silva"
- *               nome_responsavel:
- *                 type: string
- *                 example: "Maria da Silva"
- *               data_nascimento:
- *                 type: string
- *                 format: date
- *                 example: "2015-03-12"
- *               location:
- *                 type: string
- *                 example: "Rua A, 123, Cidade, Estado"
- *               phone1:
- *                 type: string
- *                 example: "(83) 99999-1111"
- *               phone2:
- *                 type: string
- *                 example: "(83) 98888-2222"
+ *             $ref: '#/components/schemas/BeneficiarioInput'
  *     responses:
  *       201:
  *         description: Beneficiário criado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Beneficiario'
  *       400:
  *         description: Erro ao cadastrar beneficiário
  */
-BenefRouter.post('/', verifyToken, BeneficiarioController.createBenefs);
+BenefRouter.post('/', BeneficiarioController.createBenefs);
 
 /**
- * @openapi
+ * @swagger
  * /benefs/{id}:
  *   patch:
  *     summary: Editar beneficiário por ID
- *     tags:
- *       - Beneficiários
+ *     tags: [Beneficiários]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -114,37 +104,30 @@ BenefRouter.post('/', verifyToken, BeneficiarioController.createBenefs);
  *           type: string
  *         example: "uuid-do-beneficiario"
  *     requestBody:
- *       description: Campos a serem atualizados do beneficiário
+ *       description: Campos a serem atualizados
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               nome:
- *                 type: string
- *                 example: "João da Silva"
- *               nome_responsavel:
- *                 type: string
- *                 example: "Maria da Silva"
- *               location:
- *                 type: string
- *                 example: "Rua B, 456, Cidade, Estado"
+ *             $ref: '#/components/schemas/BeneficiarioInput'
  *     responses:
  *       200:
- *         description: Beneficiário editado com sucesso
+ *         description: Beneficiário atualizado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Beneficiario'
  *       400:
  *         description: Erro ao editar beneficiário
  */
-BenefRouter.patch('/:id', verifyToken, BeneficiarioController.editBenef);
+BenefRouter.patch('/:id', BeneficiarioController.editBenef);
 
 /**
- * @openapi
+ * @swagger
  * /benefs/{id}:
  *   delete:
  *     summary: Deletar beneficiário por ID
- *     tags:
- *       - Beneficiários
+ *     tags: [Beneficiários]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -162,6 +145,6 @@ BenefRouter.patch('/:id', verifyToken, BeneficiarioController.editBenef);
  *       404:
  *         description: Beneficiário não encontrado
  */
-BenefRouter.delete('/:id', verifyToken, BeneficiarioController.deleteBenef);
+BenefRouter.delete('/:id', BeneficiarioController.deleteBenef);
 
 export default BenefRouter;
