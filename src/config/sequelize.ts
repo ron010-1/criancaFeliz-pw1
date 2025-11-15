@@ -7,14 +7,15 @@ import { Imagem } from '../models/Imagem.model';
 import { Visita } from '../models/Visita.model';
 import { env } from './envConfig';
 
-const sequelize = new Sequelize({
-  database: env.DATABASE_POSTGIS,
+const sequelize = new Sequelize(env.DATABASE_URL, {
   dialect: 'postgres',
-  username: env.USERNAME_POSTGIS,
-  password: env.PASSWORD_POSTGIS,
-  host: 'localhost',
-  port: 5432,
   models: [AssistenteSocial, Admin, Beneficiario, Imagem, Visita],
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    }
+  }
 });
 
 export default async function connectDatabase() {
@@ -22,7 +23,6 @@ export default async function connectDatabase() {
     await sequelize.authenticate();
     await sequelize.sync({ alter: true });
     console.log('✅ Conexão com o banco de dados estabelecida com sucesso');
-    
     return sequelize;
   } catch (error) {
     console.error('❌ Falha ao conectar ao banco de dados:');

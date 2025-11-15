@@ -5,9 +5,7 @@ dotenv.config();
 
 const envSchema = z.object({
   PORT: z.coerce.number().int().positive().default(3333),
-  USERNAME_POSTGIS: z.string(),
-  PASSWORD_POSTGIS: z.string(),
-  DATABASE_POSTGIS: z.string(),
+  DATABASE_URL: z.string(),
   JWT_SECRET: z.string(),
   JWT_EXPIRES: z.string()
 });
