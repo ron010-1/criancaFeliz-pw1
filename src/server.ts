@@ -23,10 +23,10 @@ app.use(exceptionsVerify);
 
 setupSwagger(app);
 
-app.listen(env.PORT, async () => {
+app.listen(process.env.PORT || env.PORT, async () => {
   await ConfigSequelize();
   await createDefaultAdmin();
-  console.log(`🚀 Server is running at http://localhost:${env.PORT}`);
+  console.log(`🚀 Server is running at http://localhost:${process.env.PORT || env.PORT}`);
 });
 
 
