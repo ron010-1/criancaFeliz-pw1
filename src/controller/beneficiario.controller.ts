@@ -20,7 +20,7 @@ export default class BeneficiarioController {
    *       400:
    *         description: Nenhum beneficiário encontrado
    */
-  static async getBenefs(req: Request, res: Response) {
+  static async getBenefs(req: Request, res: Response): Promise<void> {
     try {
       const benefs = await BeneficiarioService.getAllBeneficiarios();
       res.status(200).json(benefs);
@@ -54,7 +54,7 @@ export default class BeneficiarioController {
    *       404:
    *         description: Beneficiário não encontrado
    */
-  static async getBenefById(req: Request, res: Response) {
+  static async getBenefById(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     if (!id) {
       res.status(400).json("O ID do beneficiário não foi identificado.");
@@ -90,7 +90,7 @@ export default class BeneficiarioController {
    *       400:
    *         description: Erro ao cadastrar beneficiário
    */
-  static async createBenefs(req: Request, res: Response) {
+  static async createBenefs(req: Request, res: Response): Promise<void> {
     const { nome, nome_responsavel, data_nascimento, location, phone1, phone2 } = req.body;
     if (!nome || !nome_responsavel || !data_nascimento || !location || !phone1 || !phone2) {
       res.status(400).json("Campos obrigatórios não informados.");
@@ -132,7 +132,7 @@ export default class BeneficiarioController {
    *       400:
    *         description: Erro ao editar beneficiário
    */
-  static async editBenef(req: Request, res: Response) {
+  static async editBenef(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
     if (!id) {
       res.status(400).json("O ID do beneficiário não foi identificado.");

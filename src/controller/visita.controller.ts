@@ -49,7 +49,7 @@ export default class VisitaController {
    *       400:
    *         description: Erro ao salvar visita
    */
-  static createVisita: RequestHandler = async (req: Request, res: Response) => {
+  static createVisita: RequestHandler = async (req: Request, res: Response): Promise<void> => {
     const {
       date,
       imagens,
@@ -103,7 +103,7 @@ export default class VisitaController {
   static getAllvisitas: RequestHandler = async (
     req: Request,
     res: Response
-  ) => {
+  ): Promise<void> => {
     try {
       const visitas = await VisitaService.getAllVisitas();
       res.status(200).json(visitas);
@@ -138,7 +138,7 @@ export default class VisitaController {
   static getVisitasById: RequestHandler = async (
     req: Request,
     res: Response
-  ) => {
+  ): Promise<void> => {
     const { id } = req.params;
     if (!id) {
       res.status(400).json({ message: "ID da visita é obrigatório" });
@@ -199,7 +199,7 @@ export default class VisitaController {
    *       400:
    *         description: Erro ao editar visita
    */
-  static editVisita: RequestHandler = async (req: Request, res: Response) => {
+  static editVisita: RequestHandler = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params; 
     const { date, imagens, evolucao, acompanhamento_familiar, estimulo_familiar } = req.body;
   
@@ -251,7 +251,7 @@ export default class VisitaController {
    *       500:
    *         description: Erro ao deletar visita
    */
-  static deleteById: RequestHandler = async (req: Request, res: Response) => {
+  static deleteById: RequestHandler = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
 
     if (!id) {

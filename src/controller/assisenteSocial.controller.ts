@@ -43,7 +43,7 @@ export default class AssistenteSocialController {
   static createAssistenteSocial: RequestHandler = async (
     req: Request,
     res: Response
-  ) => {
+  ): Promise<void> => {
     const { email, password, telefone, nome } = req.body;
 
     if (!email || !password || !telefone || !nome) {
@@ -92,7 +92,7 @@ export default class AssistenteSocialController {
     req: Request,
     res: Response,
     next: NextFunction
-  ) => {
+  ): Promise<void> => {
     try {
       const assistentes = await AssistenteSocialService.getAllAssistentes();
       res.status(200).json(assistentes);
@@ -125,7 +125,7 @@ export default class AssistenteSocialController {
   static getAssistById: RequestHandler = async (
     req: Request,
     res: Response
-  ) => {
+  ): Promise<void> => {
     const { id } = req.params;
     if (!id) {
       res.status(400).json("O ID do assistente social não foi identificado");
@@ -172,7 +172,7 @@ export default class AssistenteSocialController {
    *       400:
    *         description: Erro ao editar
    */
-  static editAssist: RequestHandler = async (req: Request, res: Response) => {
+  static editAssist: RequestHandler = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     if (!id) {
       res.status(400).json("O ID do assistente social não foi identificado");
@@ -211,7 +211,7 @@ export default class AssistenteSocialController {
    *       400:
    *         description: Erro ao deletar
    */
-  static deleteAssist: RequestHandler = async (req: Request, res: Response) => {
+  static deleteAssist: RequestHandler = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     if (!id) {
       res.status(400).json("O ID do assistente social não foi identificado");

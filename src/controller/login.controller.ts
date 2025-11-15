@@ -48,7 +48,7 @@ export default class LoginController {
    *       401:
    *         description: Credenciais inválidas (email ou senha incorretos)
    */
-  static async login(req: Request, res: Response) {
+  static async login(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body as BodyType;
 
     const adminFound = await Admin.findOne({ where: { email } });
