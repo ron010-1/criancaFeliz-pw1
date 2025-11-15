@@ -14,8 +14,9 @@ const sequelize = new Sequelize(env.DATABASE_URL, {
     ssl: {
       require: true,
       rejectUnauthorized: false,
-    }
-  }
+    },
+  },
+  logging: false,
 });
 
 export default async function connectDatabase() {
