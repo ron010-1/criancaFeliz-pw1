@@ -17,8 +17,9 @@ const sequelize = new sequelize_typescript_1.Sequelize(envConfig_1.env.DATABASE_
         ssl: {
             require: true,
             rejectUnauthorized: false,
-        }
-    }
+        },
+    },
+    logging: false,
 });
 exports.sequelize = sequelize;
 async function connectDatabase() {

@@ -9,11 +9,13 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 function verifyToken(req, res, next) {
     const authHeader = req.headers["authorization"];
     if (!authHeader) {
-        return res.status(401).json({ message: "token not provided" });
+        res.status(401).json({ message: "token not provided" });
+        return;
     }
     const [scheme, token] = authHeader.split(" ");
     if (scheme !== "Bearer" || !token) {
-        return res.status(401).json({ message: "invalid token format" });
+        res.status(401).json({ message: "invalid token format" });
+        return;
     }
     try {
         const payload = jsonwebtoken_1.default.verify(token, envConfig_1.env.JWT_SECRET);
@@ -21,6 +23,6 @@ function verifyToken(req, res, next) {
         next();
     }
     catch (err) {
-        return res.status(401).json({ message: "token invalid" });
+        res.status(401).json({ message: "token invalid" });
     }
 }
