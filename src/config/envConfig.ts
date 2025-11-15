@@ -7,11 +7,12 @@ if (process.env.NODE_ENV !== "production") {
 
 const envSchema = z.object({
   PORT: z.coerce.number().int().positive().default(3333),
-  DATABASE_URL: z.string().url(),
+  DATABASE_URL: z.string().regex(/^postgres(ql)?:\/\//, "Invalid Postgres URL"),
   JWT_SECRET: z.string(),
   JWT_EXPIRES: z.string(),
 });
 
+console.log("DATABASE_URL recebida:", process.env.DATABASE_URL);
 const _env = envSchema.safeParse(process.env);
 
 if (!_env.success) {
