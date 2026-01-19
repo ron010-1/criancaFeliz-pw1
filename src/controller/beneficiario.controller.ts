@@ -91,16 +91,18 @@ export default class BeneficiarioController {
    *         description: Erro ao cadastrar beneficiário
    */
   static async createBenefs(req: Request, res: Response): Promise<void> {
-    const { nome, nome_responsavel, data_nascimento, location, phone1, phone2 } = req.body;
-    if (!nome || !nome_responsavel || !data_nascimento || !location || !phone1 || !phone2) {
+    const { nome, nome_responsavel, data_nascimento, location, phone1 } = req.body;
+    if (!nome || !nome_responsavel || !data_nascimento || !location || !phone1) {
       res.status(400).json("Campos obrigatórios não informados.");
     }
-    try {
-      const newBenef = await BeneficiarioService.insertBeneficiario(req.body);
-      res.status(201).json(newBenef);
-    } catch (err) {
-      console.log(err);
-      res.status(400).json("Erro ao cadastrar beneficiario!");
+    else{
+          try {
+            const newBenef = await BeneficiarioService.insertBeneficiario(req.body);
+            res.status(201).json(newBenef);
+          } catch (err) {
+              console.log(err);
+              res.status(400).json("Erro ao cadastrar beneficiario!");
+            }
     }
   }
 
