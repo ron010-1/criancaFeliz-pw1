@@ -26,6 +26,9 @@ export class Beneficiario extends Model<Beneficiario> {
     @Column(DataType.STRING)
     phone2!: string;
 
+    @Column({ type: DataType.STRING, allowNull: true })
+    foto!: string | null;
+
     @Column({
         type: DataType.GEOMETRY('POINT', 4326),
         allowNull: false

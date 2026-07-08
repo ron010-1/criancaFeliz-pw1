@@ -1,5 +1,7 @@
 import express from "express";
 import LoginController from "../controller/login.controller";
+import { validate } from "../middlewares/validate.middleware";
+import { loginSchema } from "../schemas/login.schema";
 
 export const LoginRouter = express.Router();
 
@@ -25,4 +27,4 @@ export const LoginRouter = express.Router();
  *       401:
  *         description: Email ou senha inválidos
  */
-LoginRouter.post('/', LoginController.login);
+LoginRouter.post('/', validate(loginSchema), LoginController.login);
