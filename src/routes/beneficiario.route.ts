@@ -1,6 +1,10 @@
 import { Router } from 'express';
 import BeneficiarioController from '../controller/beneficiario.controller';
 import { verifyToken } from '../middlewares/verifyJwt.middleware';
+import { verifyRole } from '../middlewares/verifyRole.middleware';
+import { validate } from '../middlewares/validate.middleware';
+import { idParamSchema } from '../schemas/idParam.schema';
+import { beneficiarioCreateSchema, beneficiarioUpdateSchema } from '../schemas/beneficiario.schema';
 
 const BenefRouter = Router();
 BenefRouter.use(verifyToken);
@@ -59,7 +63,7 @@ BenefRouter.get('/', BeneficiarioController.getBenefs);
  *       400:
  *         description: ID não informado ou erro ao buscar
  */
-BenefRouter.get('/:id', BeneficiarioController.getBenefById);
+BenefRouter.get('/:id', validate(idParamSchema, 'params'), BeneficiarioController.getBenefById);
 
 /**
  * @swagger
@@ -86,7 +90,7 @@ BenefRouter.get('/:id', BeneficiarioController.getBenefById);
  *       400:
  *         description: Erro ao cadastrar beneficiário
  */
-BenefRouter.post('/', BeneficiarioController.createBenefs);
+BenefRouter.post('/', validate(beneficiarioCreateSchema), BeneficiarioController.createBenefs);
 
 /**
  * @swagger
@@ -120,7 +124,12 @@ BenefRouter.post('/', BeneficiarioController.createBenefs);
  *       400:
  *         description: Erro ao editar beneficiário
  */
-BenefRouter.patch('/:id', BeneficiarioController.editBenef);
+BenefRouter.patch(
+  '/:id',
+  validate(idParamSchema, 'params'),
+  validate(beneficiarioUpdateSchema),
+  BeneficiarioController.editBenef
+);
 
 /**
  * @swagger
@@ -140,11 +149,16 @@ BenefRouter.patch('/:id', BeneficiarioController.editBenef);
  *     responses:
  *       200:
  *         description: Beneficiário excluído com sucesso
- *       400:
- *         description: ID não informado
+ *       403:
+ *         description: Acesso negado (somente admin)
  *       404:
  *         description: Beneficiário não encontrado
  */
-BenefRouter.delete('/:id', BeneficiarioController.deleteBenef);
+BenefRouter.delete(
+  '/:id',
+  validate(idParamSchema, 'params'),
+  verifyRole('admin'),
+  BeneficiarioController.deleteBenef
+);
 
 export default BenefRouter;

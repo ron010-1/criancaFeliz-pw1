@@ -17,6 +17,8 @@ export function exceptionsVerify(
     res.status(error.statusCode).json({ message: error.message });
     return;
   }
+
+  console.error(error);
   res.status(500).json({
     status: "Error",
     message: "Internal server error or database error",

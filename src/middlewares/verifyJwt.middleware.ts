@@ -18,8 +18,9 @@ export function verifyToken(req: Request, res: Response, next: NextFunction): vo
   }
 
   try {
-    const payload = jwt.verify(token, env.JWT_SECRET) as JwtPayload;
+    const payload = jwt.verify(token, env.JWT_SECRET) as JwtPayload & { role?: "admin" | "assistente" };
     req.userId = payload.sub as string;
+    req.userRole = payload.role;
     next();
   } catch (err) {
     res.status(401).json({ message: "token invalid" });

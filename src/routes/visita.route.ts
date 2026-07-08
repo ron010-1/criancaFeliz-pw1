@@ -1,6 +1,10 @@
 import { Router } from 'express';
 import VisitaController from '../controller/visita.controller';
 import { verifyToken } from '../middlewares/verifyJwt.middleware';
+import { verifyRole } from '../middlewares/verifyRole.middleware';
+import { validate } from '../middlewares/validate.middleware';
+import { idParamSchema } from '../schemas/idParam.schema';
+import { visitaCreateSchema, visitaUpdateSchema } from '../schemas/visita.schema';
 
 const visitaRouter = Router();
 visitaRouter.use(verifyToken);
@@ -27,7 +31,7 @@ visitaRouter.use(verifyToken);
  *       400:
  *         description: Erro ao salvar visita
  */
-visitaRouter.post('/', verifyToken, VisitaController.createVisita);
+visitaRouter.post('/', validate(visitaCreateSchema), VisitaController.createVisita);
 
 /**
  * @swagger
@@ -44,7 +48,7 @@ visitaRouter.post('/', verifyToken, VisitaController.createVisita);
  *       500:
  *         description: Erro ao buscar visitas
  */
-visitaRouter.get('/', verifyToken, VisitaController.getAllvisitas);
+visitaRouter.get('/', VisitaController.getAllvisitas);
 
 /**
  * @swagger
@@ -70,12 +74,12 @@ visitaRouter.get('/', verifyToken, VisitaController.getAllvisitas);
  *       404:
  *         description: Visita não encontrada
  */
-visitaRouter.get('/:id', verifyToken, VisitaController.getVisitasById);
+visitaRouter.get('/:id', validate(idParamSchema, 'params'), VisitaController.getVisitasById);
 
 /**
  * @swagger
  * /visitas/{id}:
- *   put:
+ *   patch:
  *     summary: Atualizar uma visita pelo ID
  *     tags:
  *       - Visitas
@@ -100,7 +104,12 @@ visitaRouter.get('/:id', verifyToken, VisitaController.getVisitasById);
  *       404:
  *         description: Visita não encontrada
  */
-visitaRouter.patch('/:id', verifyToken, VisitaController.editVisita);
+visitaRouter.patch(
+  '/:id',
+  validate(idParamSchema, 'params'),
+  validate(visitaUpdateSchema),
+  VisitaController.editVisita
+);
 
 /**
  * @swagger
@@ -117,10 +126,18 @@ visitaRouter.patch('/:id', verifyToken, VisitaController.editVisita);
  *         schema:
  *           type: string
  *     responses:
- *       204:
+ *       200:
  *         description: Visita deletada com sucesso
+ *       403:
+ *         description: Acesso negado (somente admin)
  *       404:
  *         description: Visita não encontrada
  */
-visitaRouter.delete('/:id', verifyToken, VisitaController.deleteById);
+visitaRouter.delete(
+  '/:id',
+  validate(idParamSchema, 'params'),
+  verifyRole('admin'),
+  VisitaController.deleteById
+);
+
 export default visitaRouter;

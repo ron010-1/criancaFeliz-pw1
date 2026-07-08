@@ -1,6 +1,7 @@
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { Express } from "express";
+import path from "path";
 
 export default function setupSwagger(app: Express) {
   const swaggerOptions = {
@@ -104,7 +105,7 @@ export default function setupSwagger(app: Express) {
       },
       security: [{ bearerAuth: [] }],
     },
-    apis: ["./controller/*.ts", "./routes/*.ts"],
+    apis: [path.join(__dirname, "routes", "*.{ts,js}")],
   };
 
   const swaggerDocs = swaggerJsDoc(swaggerOptions);

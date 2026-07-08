@@ -10,9 +10,10 @@ const envSchema = z.object({
   DATABASE_URL: z.string().regex(/^postgres(ql)?:\/\//, "Invalid Postgres URL"),
   JWT_SECRET: z.string(),
   JWT_EXPIRES: z.string(),
+  ADMIN_EMAIL: z.string().email().default("admin@admin.com"),
+  ADMIN_PASSWORD: z.string().min(6).default("adminpass"),
 });
 
-console.log("DATABASE_URL recebida:", process.env.DATABASE_URL);
 const _env = envSchema.safeParse(process.env);
 
 if (!_env.success) {
