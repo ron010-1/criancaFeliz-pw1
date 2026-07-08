@@ -2,6 +2,7 @@ import { Request, Response, RequestHandler } from "express";
 import { hashPassword } from "../utils/hashPassword";
 import AssistenteSocialService from "../service/assistenteSocial.service";
 import { AppErrosCustom } from "../errors/appError";
+import { assertOwnership } from "../utils/assertOwnership";
 
 export default class AssistenteSocialController {
   static createAssistenteSocial: RequestHandler = async (
@@ -30,7 +31,8 @@ export default class AssistenteSocialController {
     req: Request,
     res: Response
   ): Promise<void> => {
-    const assistentes = await AssistenteSocialService.getAllAssistentes();
+    const ownUuid = req.userRole === "admin" ? undefined : req.userId;
+    const assistentes = await AssistenteSocialService.getAllAssistentes(ownUuid);
     res.status(200).json(assistentes);
   };
 
@@ -41,6 +43,7 @@ export default class AssistenteSocialController {
     const { id } = req.params;
     const assistente = await AssistenteSocialService.getById(id);
     if (!assistente) throw new AppErrosCustom("Assistente social não encontrado", 404);
+    assertOwnership(req, assistente.uuid, "Você só pode acessar o próprio perfil.");
     res.status(200).json(assistente);
   };
 

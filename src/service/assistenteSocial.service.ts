@@ -10,8 +10,10 @@ export default class AssistenteSocialService {
     return await AssistenteSocial.create(assist);
   }
 
-  static async getAllAssistentes(){
-    return await AssistenteSocial.findAndCountAll();
+  static async getAllAssistentes(ownUuid?: string){
+    return await AssistenteSocial.findAndCountAll({
+      where: ownUuid ? { uuid: ownUuid } : {},
+    });
   }
 
   static async getById(id: string){

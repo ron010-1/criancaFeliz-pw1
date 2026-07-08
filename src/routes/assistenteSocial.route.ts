@@ -44,7 +44,8 @@ AssistenteRouter.post(
  * @openapi
  * /assists:
  *   get:
- *     summary: Listar todos os assistentes sociais
+ *     summary: Listar assistentes sociais
+ *     description: Admin vê todos os assistentes sociais. Assistente social vê apenas o próprio perfil.
  *     tags:
  *       - Assistentes Sociais
  *     security:
@@ -62,6 +63,7 @@ AssistenteRouter.get('/', AssistenteSocialController.getAllAssistentes);
  * /assists/{id}:
  *   get:
  *     summary: Buscar assistente social por ID
+ *     description: Admin pode buscar qualquer assistente. Assistente social só pode buscar o próprio perfil (id igual ao seu).
  *     tags:
  *       - Assistentes Sociais
  *     security:
@@ -76,6 +78,8 @@ AssistenteRouter.get('/', AssistenteSocialController.getAllAssistentes);
  *     responses:
  *       200:
  *         description: Assistente social encontrado
+ *       403:
+ *         description: Você só pode acessar o próprio perfil
  *       404:
  *         description: Assistente social não encontrado
  */

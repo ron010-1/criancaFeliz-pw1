@@ -1,8 +1,10 @@
 import { Beneficiario } from "../models/Beneficiario.model";
 
 export default class BeneficiarioService {
-  static async getAllBeneficiarios() {
-    return await Beneficiario.findAndCountAll();
+  static async getAllBeneficiarios(assistenteId?: string) {
+    return await Beneficiario.findAndCountAll({
+      where: assistenteId ? { assistenteId } : {},
+    });
   }
 
   static async insertBeneficiario(beneficiarioData: any) {

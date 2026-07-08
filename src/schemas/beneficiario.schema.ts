@@ -9,6 +9,7 @@ export const beneficiarioCreateSchema = z.object({
   }),
   phone1: z.string().min(1, "Telefone é obrigatório"),
   phone2: z.string().optional(),
+  foto: z.string().url("Foto deve ser uma URL válida").optional(),
 });
 
 export const beneficiarioUpdateSchema = beneficiarioCreateSchema.partial();
