@@ -165,5 +165,11 @@ export default function setupSwagger(app: Express) {
   };
 
   const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
+  app.get("/docs.json", (req, res) => {
+    res.setHeader("Content-Type", "application/json");
+    res.send(swaggerDocs);
+  });
+
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 }
