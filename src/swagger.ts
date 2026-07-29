@@ -161,7 +161,7 @@ export default function setupSwagger(app: Express) {
       },
       security: [{ bearerAuth: [] }],
     },
-    apis: [path.join(__dirname, "routes", "*.{ts,js}")],
+    apis: ["./src/routes/*.{ts,js}"],
   };
 
   const swaggerDocs = swaggerJsDoc(swaggerOptions);
