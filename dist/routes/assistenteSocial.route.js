@@ -6,6 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const assisenteSocial_controller_1 = __importDefault(require("../controller/assisenteSocial.controller"));
 const verifyJwt_middleware_1 = require("../middlewares/verifyJwt.middleware");
+const verifyRole_middleware_1 = require("../middlewares/verifyRole.middleware");
+const validate_middleware_1 = require("../middlewares/validate.middleware");
+const idParam_schema_1 = require("../schemas/idParam.schema");
+const assistenteSocial_schema_1 = require("../schemas/assistenteSocial.schema");
 const AssistenteRouter = (0, express_1.Router)();
 AssistenteRouter.use(verifyJwt_middleware_1.verifyToken);
 /**
@@ -23,37 +27,22 @@ AssistenteRouter.use(verifyJwt_middleware_1.verifyToken);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *               - telefone
- *               - nome
- *             properties:
- *               email:
- *                 type: string
- *                 example: "assistente@email.com"
- *               password:
- *                 type: string
- *                 example: "123456"
- *               telefone:
- *                 type: string
- *                 example: "(83) 99999-1111"
- *               nome:
- *                 type: string
- *                 example: "Maria Silva"
+ *             $ref: '#/components/schemas/AssistenteSocialInput'
  *     responses:
  *       201:
  *         description: Assistente social criado com sucesso
  *       400:
  *         description: Erro ao cadastrar assistente
+ *       403:
+ *         description: Acesso negado (somente admin)
  */
-AssistenteRouter.post('/', verifyJwt_middleware_1.verifyToken, assisenteSocial_controller_1.default.createAssistenteSocial);
+AssistenteRouter.post('/', (0, validate_middleware_1.validate)(assistenteSocial_schema_1.assistenteSocialCreateSchema), (0, verifyRole_middleware_1.verifyRole)('admin'), assisenteSocial_controller_1.default.createAssistenteSocial);
 /**
  * @openapi
  * /assists:
  *   get:
- *     summary: Listar todos os assistentes sociais
+ *     summary: Listar assistentes sociais
+ *     description: Admin vê todos os assistentes sociais. Assistente social vê apenas o próprio perfil.
  *     tags:
  *       - Assistentes Sociais
  *     security:
@@ -64,12 +53,13 @@ AssistenteRouter.post('/', verifyJwt_middleware_1.verifyToken, assisenteSocial_c
  *       500:
  *         description: Erro ao buscar assistentes
  */
-AssistenteRouter.get('/', verifyJwt_middleware_1.verifyToken, assisenteSocial_controller_1.default.getAllAssistentes);
+AssistenteRouter.get('/', assisenteSocial_controller_1.default.getAllAssistentes);
 /**
  * @openapi
  * /assists/{id}:
  *   get:
  *     summary: Buscar assistente social por ID
+ *     description: Admin pode buscar qualquer assistente. Assistente social só pode buscar o próprio perfil (id igual ao seu).
  *     tags:
  *       - Assistentes Sociais
  *     security:
@@ -84,10 +74,12 @@ AssistenteRouter.get('/', verifyJwt_middleware_1.verifyToken, assisenteSocial_co
  *     responses:
  *       200:
  *         description: Assistente social encontrado
- *       400:
- *         description: ID não informado
+ *       403:
+ *         description: Você só pode acessar o próprio perfil
+ *       404:
+ *         description: Assistente social não encontrado
  */
-AssistenteRouter.get('/:id', verifyJwt_middleware_1.verifyToken, assisenteSocial_controller_1.default.getAssistById);
+AssistenteRouter.get('/:id', (0, validate_middleware_1.validate)(idParam_schema_1.idParamSchema, 'params'), assisenteSocial_controller_1.default.getAssistById);
 /**
  * @openapi
  * /assists/{id}:
@@ -107,12 +99,12 @@ AssistenteRouter.get('/:id', verifyJwt_middleware_1.verifyToken, assisenteSocial
  *     responses:
  *       200:
  *         description: Assistente social deletado com sucesso
- *       400:
- *         description: ID não informado
+ *       403:
+ *         description: Acesso negado (somente admin)
  *       404:
  *         description: Assistente social não encontrado
  */
-AssistenteRouter.delete('/:id', verifyJwt_middleware_1.verifyToken, assisenteSocial_controller_1.default.deleteAssist);
+AssistenteRouter.delete('/:id', (0, validate_middleware_1.validate)(idParam_schema_1.idParamSchema, 'params'), (0, verifyRole_middleware_1.verifyRole)('admin'), assisenteSocial_controller_1.default.deleteAssist);
 /**
  * @openapi
  * /assists/{id}:
@@ -151,6 +143,10 @@ AssistenteRouter.delete('/:id', verifyJwt_middleware_1.verifyToken, assisenteSoc
  *         description: Assistente social editado com sucesso
  *       400:
  *         description: Erro ao editar assistente
+ *       403:
+ *         description: Acesso negado (somente admin)
+ *       404:
+ *         description: Assistente social não encontrado
  */
-AssistenteRouter.patch('/:id', verifyJwt_middleware_1.verifyToken, assisenteSocial_controller_1.default.editAssist);
+AssistenteRouter.patch('/:id', (0, validate_middleware_1.validate)(idParam_schema_1.idParamSchema, 'params'), (0, validate_middleware_1.validate)(assistenteSocial_schema_1.assistenteSocialUpdateSchema), (0, verifyRole_middleware_1.verifyRole)('admin'), assisenteSocial_controller_1.default.editAssist);
 exports.default = AssistenteRouter;
