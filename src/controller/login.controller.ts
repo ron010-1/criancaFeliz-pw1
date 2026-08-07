@@ -5,6 +5,8 @@ import { AssistenteSocial } from '../models/AssistenteSocial.model';
 import { env } from '../config/envConfig';
 import { AppErrosCustom } from '../errors/appError';
 import jwt, { SignOptions } from 'jsonwebtoken';
+import AdminService from '../service/admin.service';
+import AssistenteSocialService from '../service/assistenteSocial.service';
 
 interface BodyType {
   email: string;
@@ -32,5 +34,31 @@ export default class LoginController {
     );
 
     res.status(200).json({ token });
+  }
+
+  static async me(req: Request, res: Response): Promise<void> {
+    const { userId, userRole } = req;
+
+    if (!userId || !userRole) throw new AppErrosCustom('Não autenticado', 401);
+
+    if (userRole === 'admin') {
+      const admin = await AdminService.getById(userId);
+      if (!admin) throw new AppErrosCustom('Usuário não encontrado', 404);
+
+      res.status(200).json({
+        uuid: admin.uuid,
+        email: admin.email,
+      });
+      return;
+    }
+
+    const assistente = await AssistenteSocialService.getById(userId);
+    if (!assistente) throw new AppErrosCustom('Usuário não encontrado', 404);
+
+    res.status(200).json({
+      nome: assistente.nome,
+      email: assistente.email,
+      telefone: assistente.telefone,
+    });
   }
 }
