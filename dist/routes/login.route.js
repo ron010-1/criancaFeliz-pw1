@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoginRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const login_controller_1 = __importDefault(require("../controller/login.controller"));
+const validate_middleware_1 = require("../middlewares/validate.middleware");
+const login_schema_1 = require("../schemas/login.schema");
 exports.LoginRouter = express_1.default.Router();
 /**
  * @swagger
@@ -29,4 +31,4 @@ exports.LoginRouter = express_1.default.Router();
  *       401:
  *         description: Email ou senha inválidos
  */
-exports.LoginRouter.post('/', login_controller_1.default.login);
+exports.LoginRouter.post('/', (0, validate_middleware_1.validate)(login_schema_1.loginSchema), login_controller_1.default.login);

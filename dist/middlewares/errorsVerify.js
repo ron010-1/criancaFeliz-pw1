@@ -12,6 +12,7 @@ function exceptionsVerify(error, req, res, next) {
         res.status(error.statusCode).json({ message: error.message });
         return;
     }
+    console.error(error);
     res.status(500).json({
         status: "Error",
         message: "Internal server error or database error",

@@ -33,6 +33,9 @@ __decorate([
     (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING)
 ], Beneficiario.prototype, "phone2", void 0);
 __decorate([
+    (0, sequelize_typescript_1.Column)({ type: sequelize_typescript_1.DataType.STRING, allowNull: true })
+], Beneficiario.prototype, "foto", void 0);
+__decorate([
     (0, sequelize_typescript_1.Column)({
         type: sequelize_typescript_1.DataType.GEOMETRY('POINT', 4326),
         allowNull: false

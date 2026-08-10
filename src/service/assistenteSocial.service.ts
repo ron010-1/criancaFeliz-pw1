@@ -11,13 +11,17 @@ export default class AssistenteSocialService {
   }
 
   static async getAllAssistentes(ownUuid?: string){
-    return await AssistenteSocial.findAndCountAll({
+    return await AssistenteSocial.findAll({
       where: ownUuid ? { uuid: ownUuid } : {},
+      attributes: { exclude: ["password"] },
+      order: [["nome", "ASC"]],
     });
   }
 
   static async getById(id: string){
-    return await AssistenteSocial.findByPk(id);
+    return await AssistenteSocial.findByPk(id, {
+      attributes: { exclude: ["password"] },
+    });
   };
 
   static async getByEmail(email: string) {
@@ -29,7 +33,7 @@ export default class AssistenteSocialService {
         where : { uuid: id}
     });
     if (updated) {
-      return await AssistenteSocial.findOne({ where: { uuid: id } });
+      return await this.getById(id);
     };
     return null;
   };

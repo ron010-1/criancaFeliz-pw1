@@ -10,11 +10,17 @@ class AssistenteSocialService {
         };
         return await AssistenteSocial_model_1.AssistenteSocial.create(assist);
     }
-    static async getAllAssistentes() {
-        return await AssistenteSocial_model_1.AssistenteSocial.findAndCountAll();
+    static async getAllAssistentes(ownUuid) {
+        return await AssistenteSocial_model_1.AssistenteSocial.findAll({
+            where: ownUuid ? { uuid: ownUuid } : {},
+            attributes: { exclude: ["password"] },
+            order: [["nome", "ASC"]],
+        });
     }
     static async getById(id) {
-        return await AssistenteSocial_model_1.AssistenteSocial.findByPk(id);
+        return await AssistenteSocial_model_1.AssistenteSocial.findByPk(id, {
+            attributes: { exclude: ["password"] },
+        });
     }
     ;
     static async getByEmail(email) {
@@ -25,7 +31,7 @@ class AssistenteSocialService {
             where: { uuid: id }
         });
         if (updated) {
-            return await AssistenteSocial_model_1.AssistenteSocial.findOne({ where: { uuid: id } });
+            return await this.getById(id);
         }
         ;
         return null;
