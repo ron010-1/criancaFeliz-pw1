@@ -3,8 +3,6 @@ import path from "path";
 import fs from "fs";
 import crypto from "crypto";
 
-// Os arquivos ficam no disco da máquina que roda a API e são servidos
-// estaticamente em /uploads (ver server.ts).
 export const UPLOAD_DIR = path.resolve(process.cwd(), "uploads");
 
 if (!fs.existsSync(UPLOAD_DIR)) {

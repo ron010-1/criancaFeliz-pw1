@@ -17,8 +17,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Os arquivos enviados são servidos publicamente: o nome é um uuid não
-// adivinhável, mas quem tiver o link acessa sem autenticação.
 app.use("/uploads", express.static(UPLOAD_DIR));
 
 app.use("/visitas", visitaRouter);
