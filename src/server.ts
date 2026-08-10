@@ -6,6 +6,8 @@ import BenefRouter from "./routes/beneficiario.route";
 import visitaRouter from "./routes/visita.route";
 import { LoginRouter } from "./routes/login.route";
 import AssistenteRouter from "./routes/assistenteSocial.route";
+import UploadRouter from "./routes/upload.route";
+import { UPLOAD_DIR } from "./config/upload";
 import { createDefaultAdmin } from "./config/createDefaultAdmin";
 import { exceptionsVerify } from "./middlewares/errorsVerify";
 import swaggerUi from "swagger-ui-express";
@@ -15,10 +17,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Os arquivos enviados são servidos publicamente: o nome é um uuid não
+// adivinhável, mas quem tiver o link acessa sem autenticação.
+app.use("/uploads", express.static(UPLOAD_DIR));
+
 app.use("/visitas", visitaRouter);
 app.use("/benefs", BenefRouter);
 app.use("/assists", AssistenteRouter);
 app.use("/login", LoginRouter);
+app.use("/uploads", UploadRouter);
 app.use(exceptionsVerify);
 
 setupSwagger(app);
