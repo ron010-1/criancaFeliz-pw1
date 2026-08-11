@@ -121,6 +121,7 @@ AssistenteRouter.delete(
  * /assists/{id}:
  *   patch:
  *     summary: Editar assistente social por ID
+ *     description: Admin pode editar qualquer assistente social. Assistente social só pode editar o próprio perfil (id igual ao seu).
  *     tags:
  *       - Assistentes Sociais
  *     security:
@@ -155,7 +156,7 @@ AssistenteRouter.delete(
  *       400:
  *         description: Erro ao editar assistente
  *       403:
- *         description: Acesso negado (somente admin)
+ *         description: Acesso negado (admin pode editar qualquer assistente; assistente social só pode editar o próprio perfil)
  *       404:
  *         description: Assistente social não encontrado
  */
@@ -163,7 +164,6 @@ AssistenteRouter.patch(
   '/:id',
   validate(idParamSchema, 'params'),
   validate(assistenteSocialUpdateSchema),
-  verifyRole('admin'),
   AssistenteSocialController.editAssist
 );
 

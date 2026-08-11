@@ -6,6 +6,7 @@ import BenefRouter from "./routes/beneficiario.route";
 import visitaRouter from "./routes/visita.route";
 import { LoginRouter } from "./routes/login.route";
 import AssistenteRouter from "./routes/assistenteSocial.route";
+import AdminRouter from "./routes/admin.route";
 import UploadRouter from "./routes/upload.route";
 import { UPLOAD_DIR } from "./config/upload";
 import { createDefaultAdmin } from "./config/createDefaultAdmin";
@@ -22,6 +23,7 @@ app.use("/uploads", express.static(UPLOAD_DIR));
 app.use("/visitas", visitaRouter);
 app.use("/benefs", BenefRouter);
 app.use("/assists", AssistenteRouter);
+app.use("/admin", AdminRouter);
 app.use("/login", LoginRouter);
 app.use("/uploads", UploadRouter);
 app.use(exceptionsVerify);
@@ -40,6 +42,3 @@ app.listen(process.env.PORT || env.PORT || '0.0.0.0', async () => {
     process.exit(1); 
   }
 });
-
-
-//teste

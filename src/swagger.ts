@@ -35,6 +35,27 @@ export default function setupSwagger(app: Express) {
               token: { type: "string", example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." },
             },
           },
+          MeResponse: {
+            oneOf: [
+              {
+                type: "object",
+                description: "Retornado quando o usuário autenticado é um admin",
+                properties: {
+                  uuid: { type: "string", example: "uuid-do-admin" },
+                  email: { type: "string", format: "email", example: "admin@email.com" },
+                },
+              },
+              {
+                type: "object",
+                description: "Retornado quando o usuário autenticado é um assistente social",
+                properties: {
+                  nome: { type: "string", example: "Carlos Souza" },
+                  email: { type: "string", format: "email", example: "carlos@email.com" },
+                  telefone: { type: "string", example: "(83) 97777-3333" },
+                },
+              },
+            ],
+          },
           GeoPoint: {
             type: "object",
             description: "Ponto de geolocalização (GeoJSON). coordinates segue o padrão [longitude, latitude].",
@@ -129,6 +150,11 @@ export default function setupSwagger(app: Express) {
               acompanhamento_familiar: { type: "string", example: "Família presente." },
               estimulo_familiar: { type: "string", example: "Família estimula paciente em casa." },
               beneficiarioId: { type: "string", example: "uuid-do-beneficiario" },
+              location: {
+                allOf: [{ $ref: "#/components/schemas/GeoPoint" }],
+                nullable: true,
+                description: "Localização onde a visita foi realizada. Campo opcional.",
+              },
               assistenteId: {
                 type: "string",
                 nullable: true,
@@ -155,6 +181,11 @@ export default function setupSwagger(app: Express) {
               acompanhamento_familiar: { type: "string", example: "Família presente." },
               estimulo_familiar: { type: "string", example: "Família estimula paciente em casa." },
               beneficiarioId: { type: "string", example: "uuid-do-beneficiario" },
+              location: {
+                allOf: [{ $ref: "#/components/schemas/GeoPoint" }],
+                nullable: true,
+                description: "Localização onde a visita foi realizada (opcional).",
+              },
             },
           },
         },
