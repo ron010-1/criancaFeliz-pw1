@@ -14,8 +14,9 @@ const envSchema = zod_1.z.object({
     DATABASE_URL: zod_1.z.string().regex(/^postgres(ql)?:\/\//, "Invalid Postgres URL"),
     JWT_SECRET: zod_1.z.string(),
     JWT_EXPIRES: zod_1.z.string(),
+    ADMIN_EMAIL: zod_1.z.string().email().default("admin@admin.com"),
+    ADMIN_PASSWORD: zod_1.z.string().min(6).default("adminpass"),
 });
-console.log("DATABASE_URL recebida:", process.env.DATABASE_URL);
 const _env = envSchema.safeParse(process.env);
 if (!_env.success) {
     console.error("❌ Variáveis de ambiente inválidas:", _env.error.format());

@@ -23,8 +23,16 @@ app.use("/assists", assistenteSocial_route_1.default);
 app.use("/login", login_route_1.LoginRouter);
 app.use(errorsVerify_1.exceptionsVerify);
 (0, swagger_1.default)(app);
-app.listen(envConfig_1.env.PORT, async () => {
-    await (0, sequelize_1.default)();
-    await (0, createDefaultAdmin_1.createDefaultAdmin)();
-    console.log(`🚀 Server is running at http://localhost:${envConfig_1.env.PORT}`);
+const port = process.env.PORT || '0.0.0.0';
+app.listen(process.env.PORT || envConfig_1.env.PORT || '0.0.0.0', async () => {
+    try {
+        await (0, sequelize_1.default)();
+        await (0, createDefaultAdmin_1.createDefaultAdmin)();
+        console.log(`🚀 Server is running on port ${port}`);
+    }
+    catch (error) {
+        console.error("Erro na inicialização:", error);
+        process.exit(1);
+    }
 });
+//teste

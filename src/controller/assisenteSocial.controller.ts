@@ -24,7 +24,8 @@ export default class AssistenteSocialController {
     };
 
     const newAssist = await AssistenteSocialService.createAssistenteSocial(assistData);
-    res.status(201).json(newAssist);
+    const { password: _password, ...safeAssist } = newAssist.toJSON();
+    res.status(201).json(safeAssist);
   };
 
   static getAllAssistentes: RequestHandler = async (
@@ -49,13 +50,20 @@ export default class AssistenteSocialController {
 
   static editAssist: RequestHandler = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
+    const updateData = { ...req.body };
 
-    const existingAssist = await AssistenteSocialService.getById(id);
-    if (!existingAssist) throw new AppErrosCustom("Assistente social não encontrado", 404);
+    if (updateData.email) {
+      const sameEmail = await AssistenteSocialService.getByEmail(updateData.email);
+      if (sameEmail && sameEmail.uuid !== id) {
+        throw new AppErrosCustom("Este email já está cadastrado", 400);
+      }
+    }
 
-    assertOwnership(req, existingAssist.uuid, "Você só pode editar o próprio perfil.");
+    if (updateData.password) {
+      updateData.password = await hashPassword(updateData.password);
+    }
 
-    const assistente = await AssistenteSocialService.editAssistById(id, req.body);
+    const assistente = await AssistenteSocialService.editAssistById(id, updateData);
     if (!assistente) throw new AppErrosCustom("Assistente social não encontrado", 404);
     res.status(200).json(assistente);
   };

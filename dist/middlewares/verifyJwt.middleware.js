@@ -20,6 +20,7 @@ function verifyToken(req, res, next) {
     try {
         const payload = jsonwebtoken_1.default.verify(token, envConfig_1.env.JWT_SECRET);
         req.userId = payload.sub;
+        req.userRole = payload.role;
         next();
     }
     catch (err) {

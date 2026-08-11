@@ -6,6 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const beneficiario_controller_1 = __importDefault(require("../controller/beneficiario.controller"));
 const verifyJwt_middleware_1 = require("../middlewares/verifyJwt.middleware");
+const validate_middleware_1 = require("../middlewares/validate.middleware");
+const idParam_schema_1 = require("../schemas/idParam.schema");
+const beneficiario_schema_1 = require("../schemas/beneficiario.schema");
 const BenefRouter = (0, express_1.Router)();
 BenefRouter.use(verifyJwt_middleware_1.verifyToken);
 /**
@@ -18,7 +21,8 @@ BenefRouter.use(verifyJwt_middleware_1.verifyToken);
  * @swagger
  * /benefs:
  *   get:
- *     summary: Listar todos os beneficiários
+ *     summary: Listar beneficiários
+ *     description: Admin vê todos os beneficiários. Assistente social vê apenas os que ele mesmo cadastrou.
  *     tags: [Beneficiários]
  *     security:
  *       - bearerAuth: []
@@ -40,6 +44,7 @@ BenefRouter.get('/', beneficiario_controller_1.default.getBenefs);
  * /benefs/{id}:
  *   get:
  *     summary: Buscar beneficiário por ID
+ *     description: Admin pode buscar qualquer beneficiário. Assistente social só pode buscar um beneficiário cadastrado por ele mesmo.
  *     tags: [Beneficiários]
  *     security:
  *       - bearerAuth: []
@@ -59,8 +64,12 @@ BenefRouter.get('/', beneficiario_controller_1.default.getBenefs);
  *               $ref: '#/components/schemas/Beneficiario'
  *       400:
  *         description: ID não informado ou erro ao buscar
+ *       403:
+ *         description: Beneficiário não foi cadastrado por você
+ *       404:
+ *         description: Beneficiário não encontrado
  */
-BenefRouter.get('/:id', beneficiario_controller_1.default.getBenefById);
+BenefRouter.get('/:id', (0, validate_middleware_1.validate)(idParam_schema_1.idParamSchema, 'params'), beneficiario_controller_1.default.getBenefById);
 /**
  * @swagger
  * /benefs:
@@ -86,12 +95,13 @@ BenefRouter.get('/:id', beneficiario_controller_1.default.getBenefById);
  *       400:
  *         description: Erro ao cadastrar beneficiário
  */
-BenefRouter.post('/', beneficiario_controller_1.default.createBenefs);
+BenefRouter.post('/', (0, validate_middleware_1.validate)(beneficiario_schema_1.beneficiarioCreateSchema), beneficiario_controller_1.default.createBenefs);
 /**
  * @swagger
  * /benefs/{id}:
  *   patch:
  *     summary: Editar beneficiário por ID
+ *     description: Admin pode editar qualquer beneficiário. Assistente social só pode editar um beneficiário cadastrado por ele mesmo.
  *     tags: [Beneficiários]
  *     security:
  *       - bearerAuth: []
@@ -118,13 +128,18 @@ BenefRouter.post('/', beneficiario_controller_1.default.createBenefs);
  *               $ref: '#/components/schemas/Beneficiario'
  *       400:
  *         description: Erro ao editar beneficiário
+ *       403:
+ *         description: Beneficiário não foi cadastrado por você
+ *       404:
+ *         description: Beneficiário não encontrado
  */
-BenefRouter.patch('/:id', beneficiario_controller_1.default.editBenef);
+BenefRouter.patch('/:id', (0, validate_middleware_1.validate)(idParam_schema_1.idParamSchema, 'params'), (0, validate_middleware_1.validate)(beneficiario_schema_1.beneficiarioUpdateSchema), beneficiario_controller_1.default.editBenef);
 /**
  * @swagger
  * /benefs/{id}:
  *   delete:
  *     summary: Deletar beneficiário por ID
+ *     description: Admin pode deletar qualquer beneficiário. Assistente social só pode deletar um beneficiário cadastrado por ele mesmo.
  *     tags: [Beneficiários]
  *     security:
  *       - bearerAuth: []
@@ -138,10 +153,10 @@ BenefRouter.patch('/:id', beneficiario_controller_1.default.editBenef);
  *     responses:
  *       200:
  *         description: Beneficiário excluído com sucesso
- *       400:
- *         description: ID não informado
+ *       403:
+ *         description: Beneficiário não foi cadastrado por você
  *       404:
  *         description: Beneficiário não encontrado
  */
-BenefRouter.delete('/:id', beneficiario_controller_1.default.deleteBenef);
+BenefRouter.delete('/:id', (0, validate_middleware_1.validate)(idParam_schema_1.idParamSchema, 'params'), beneficiario_controller_1.default.deleteBenef);
 exports.default = BenefRouter;

@@ -38,6 +38,21 @@ function setupSwagger(app) {
                             token: { type: "string", example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." },
                         },
                     },
+                    GeoPoint: {
+                        type: "object",
+                        description: "Ponto de geolocalização (GeoJSON). coordinates segue o padrão [longitude, latitude].",
+                        required: ["type", "coordinates"],
+                        properties: {
+                            type: { type: "string", example: "Point" },
+                            coordinates: {
+                                type: "array",
+                                items: { type: "number" },
+                                minItems: 2,
+                                maxItems: 2,
+                                example: [-34.8631, -7.1195],
+                            },
+                        },
+                    },
                     Beneficiario: {
                         type: "object",
                         properties: {
@@ -45,9 +60,22 @@ function setupSwagger(app) {
                             nome: { type: "string", example: "João da Silva" },
                             nome_responsavel: { type: "string", example: "Maria da Silva" },
                             data_nascimento: { type: "string", format: "date", example: "2015-03-12" },
-                            location: { type: "string", example: "Rua A, 123, Cidade, Estado" },
+                            location: { $ref: "#/components/schemas/GeoPoint" },
                             phone1: { type: "string", example: "(83) 99999-1111" },
                             phone2: { type: "string", example: "(83) 98888-2222" },
+                            assistenteId: {
+                                type: "string",
+                                nullable: true,
+                                description: "UUID do assistente social que cadastrou este beneficiário (null se foi cadastrado por um admin). Define quem pode editar/excluir.",
+                                example: "uuid-do-assistente",
+                            },
+                            foto: {
+                                type: "string",
+                                format: "uri",
+                                nullable: true,
+                                description: "URL da foto de perfil do beneficiário, já hospedada (ex.: Cloudinary). A API não recebe o arquivo binário, só a URL.",
+                                example: "https://res.cloudinary.com/demo/image/upload/beneficiario.jpg",
+                            },
                         },
                     },
                     BeneficiarioInput: {
@@ -57,9 +85,15 @@ function setupSwagger(app) {
                             nome: { type: "string", example: "João da Silva" },
                             nome_responsavel: { type: "string", example: "Maria da Silva" },
                             data_nascimento: { type: "string", format: "date", example: "2015-03-12" },
-                            location: { type: "string", example: "Rua A, 123, Cidade, Estado" },
+                            location: { $ref: "#/components/schemas/GeoPoint" },
                             phone1: { type: "string", example: "(83) 99999-1111" },
                             phone2: { type: "string", example: "(83) 98888-2222" },
+                            foto: {
+                                type: "string",
+                                format: "uri",
+                                description: "URL da foto de perfil já hospedada (ex.: Cloudinary). Campo opcional.",
+                                example: "https://res.cloudinary.com/demo/image/upload/beneficiario.jpg",
+                            },
                         },
                     },
                     AssistenteSocial: {
@@ -85,11 +119,25 @@ function setupSwagger(app) {
                         properties: {
                             id: { type: "string", example: "uuid-da-visita" },
                             date: { type: "string", format: "date", example: "2025-08-27" },
-                            imagens: { type: "array", items: { type: "string" }, example: ["https://img.com/foto1.png"] },
+                            imagens: {
+                                type: "array",
+                                items: { type: "string", format: "uri" },
+                                description: "URLs das fotos da visita, já hospedadas (ex.: Cloudinary). A API não recebe arquivo binário, só as URLs.",
+                                example: [
+                                    "https://res.cloudinary.com/demo/image/upload/visita1.jpg",
+                                    "https://res.cloudinary.com/demo/image/upload/visita2.jpg",
+                                ],
+                            },
                             evolucao: { type: "string", example: "Paciente estável." },
                             acompanhamento_familiar: { type: "string", example: "Família presente." },
                             estimulo_familiar: { type: "string", example: "Família estimula paciente em casa." },
                             beneficiarioId: { type: "string", example: "uuid-do-beneficiario" },
+                            assistenteId: {
+                                type: "string",
+                                nullable: true,
+                                description: "UUID do assistente social que cadastrou esta visita (null se foi cadastrada por um admin). Define quem pode editar/excluir.",
+                                example: "uuid-do-assistente",
+                            },
                         },
                     },
                     VisitaInput: {
@@ -97,7 +145,15 @@ function setupSwagger(app) {
                         required: ["date", "evolucao", "acompanhamento_familiar", "estimulo_familiar", "beneficiarioId"],
                         properties: {
                             date: { type: "string", format: "date", example: "2025-08-27" },
-                            imagens: { type: "array", items: { type: "string" }, example: ["https://img.com/foto1.png"] },
+                            imagens: {
+                                type: "array",
+                                items: { type: "string", format: "uri" },
+                                description: "URLs das fotos já hospedadas (ex.: Cloudinary). Em uma edição (PATCH), enviar este campo substitui TODAS as fotos anteriores da visita (não é possível adicionar/remover individualmente); omitir o campo mantém as fotos atuais.",
+                                example: [
+                                    "https://res.cloudinary.com/demo/image/upload/visita1.jpg",
+                                    "https://res.cloudinary.com/demo/image/upload/visita2.jpg",
+                                ],
+                            },
                             evolucao: { type: "string", example: "Paciente estável." },
                             acompanhamento_familiar: { type: "string", example: "Família presente." },
                             estimulo_familiar: { type: "string", example: "Família estimula paciente em casa." },
@@ -108,8 +164,12 @@ function setupSwagger(app) {
             },
             security: [{ bearerAuth: [] }],
         },
-        apis: ["./controller/*.ts", "./routes/*.ts"],
+        apis: ["./src/routes/*.{ts,js}"],
     };
     const swaggerDocs = (0, swagger_jsdoc_1.default)(swaggerOptions);
+    app.get("/docs.json", (req, res) => {
+        res.setHeader("Content-Type", "application/json");
+        res.send(swaggerDocs);
+    });
     app.use("/docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocs));
 }

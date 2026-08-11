@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { mediaPathSchema } from "./media.schema";
 
 export const beneficiarioCreateSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
@@ -9,7 +10,7 @@ export const beneficiarioCreateSchema = z.object({
   }),
   phone1: z.string().min(1, "Telefone é obrigatório"),
   phone2: z.string().optional(),
-  foto: z.string().url("Foto deve ser uma URL válida").optional(),
+  foto: mediaPathSchema.optional(),
 });
 
 export const beneficiarioUpdateSchema = beneficiarioCreateSchema.partial();
