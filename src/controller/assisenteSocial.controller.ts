@@ -49,6 +49,12 @@ export default class AssistenteSocialController {
 
   static editAssist: RequestHandler = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
+
+    const existingAssist = await AssistenteSocialService.getById(id);
+    if (!existingAssist) throw new AppErrosCustom("Assistente social não encontrado", 404);
+
+    assertOwnership(req, existingAssist.uuid, "Você só pode editar o próprio perfil.");
+
     const assistente = await AssistenteSocialService.editAssistById(id, req.body);
     if (!assistente) throw new AppErrosCustom("Assistente social não encontrado", 404);
     res.status(200).json(assistente);
