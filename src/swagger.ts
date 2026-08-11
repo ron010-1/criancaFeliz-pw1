@@ -150,6 +150,11 @@ export default function setupSwagger(app: Express) {
               acompanhamento_familiar: { type: "string", example: "Família presente." },
               estimulo_familiar: { type: "string", example: "Família estimula paciente em casa." },
               beneficiarioId: { type: "string", example: "uuid-do-beneficiario" },
+              location: {
+                allOf: [{ $ref: "#/components/schemas/GeoPoint" }],
+                nullable: true,
+                description: "Localização onde a visita foi realizada. Campo opcional.",
+              },
               assistenteId: {
                 type: "string",
                 nullable: true,
@@ -176,6 +181,11 @@ export default function setupSwagger(app: Express) {
               acompanhamento_familiar: { type: "string", example: "Família presente." },
               estimulo_familiar: { type: "string", example: "Família estimula paciente em casa." },
               beneficiarioId: { type: "string", example: "uuid-do-beneficiario" },
+              location: {
+                allOf: [{ $ref: "#/components/schemas/GeoPoint" }],
+                nullable: true,
+                description: "Localização onde a visita foi realizada (opcional).",
+              },
             },
           },
         },
