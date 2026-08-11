@@ -6,6 +6,7 @@ import BenefRouter from "./routes/beneficiario.route";
 import visitaRouter from "./routes/visita.route";
 import { LoginRouter } from "./routes/login.route";
 import AssistenteRouter from "./routes/assistenteSocial.route";
+import AdminRouter from "./routes/admin.route";
 import { createDefaultAdmin } from "./config/createDefaultAdmin";
 import { exceptionsVerify } from "./middlewares/errorsVerify";
 import swaggerUi from "swagger-ui-express";
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use("/visitas", visitaRouter);
 app.use("/benefs", BenefRouter);
 app.use("/assists", AssistenteRouter);
+app.use("/admin", AdminRouter);
 app.use("/login", LoginRouter);
 app.use(exceptionsVerify);
 
