@@ -7,15 +7,19 @@ import { Imagem } from '../models/Imagem.model';
 import { Visita } from '../models/Visita.model';
 import { env } from './envConfig';
 
+const isProduction = env.NODE_ENV === 'production';
+
 const sequelize = new Sequelize(env.DATABASE_URL, {
   dialect: 'postgres',
   models: [AssistenteSocial, Admin, Beneficiario, Imagem, Visita],
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
-    },
-  },
+  dialectOptions: isProduction
+    ? {
+        ssl: {
+          require: true,
+          rejectUnauthorized: false,
+        },
+      }
+    : {},
   logging: false,
 });
 

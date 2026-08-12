@@ -12,6 +12,7 @@ const envSchema = z.object({
   JWT_EXPIRES: z.string(),
   ADMIN_EMAIL: z.string().email().default("admin@admin.com"),
   ADMIN_PASSWORD: z.string().min(6).default("adminpass"),
+  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 });
 
 const _env = envSchema.safeParse(process.env);
