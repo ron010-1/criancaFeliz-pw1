@@ -1,9 +1,20 @@
 # Dependências
 node_modules/
 
+# Arquivos enviados pelos usuários (imagens/vídeos)
+uploads/
+
 # Variáveis de ambiente
 .env
 .env.local
 .env.development
 .env.test
 .env.production
+
+.docker-compose.yml
+
+*.log
+
+*.rtk/
+*claude.MD
+*.claude/

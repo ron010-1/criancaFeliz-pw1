@@ -1,54 +1,18 @@
-import { Request, Response, RequestHandler, NextFunction } from "express";
+import { Request, Response, RequestHandler } from "express";
 import { hashPassword } from "../utils/hashPassword";
 import AssistenteSocialService from "../service/assistenteSocial.service";
+import { AppErrosCustom } from "../errors/appError";
+import { assertOwnership } from "../utils/assertOwnership";
 
 export default class AssistenteSocialController {
-  /**
-   * @openapi
-   * /assistentes:
-   *   post:
-   *     summary: Cadastrar um novo assistente social
-   *     tags:
-   *       - Assistentes Sociais
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/json:
-   *           schema:
-   *             type: object
-   *             required:
-   *               - email
-   *               - password
-   *               - telefone
-   *               - nome
-   *             properties:
-   *               email:
-   *                 type: string
-   *                 example: "assistente@email.com"
-   *               password:
-   *                 type: string
-   *                 example: "senhaSegura123"
-   *               telefone:
-   *                 type: string
-   *                 example: "(83) 98888-7777"
-   *               nome:
-   *                 type: string
-   *                 example: "Maria Souza"
-   *     responses:
-   *       201:
-   *         description: Assistente social criado com sucesso
-   *       400:
-   *         description: Erro de validação ou email já cadastrado
-   */
   static createAssistenteSocial: RequestHandler = async (
     req: Request,
     res: Response
-  ) => {
+  ): Promise<void> => {
     const { email, password, telefone, nome } = req.body;
 
-    if (!email || !password || !telefone || !nome) {
-      res.status(400).json("Email, password, telefone e nome são obrigatórios");
-    }
+    const existingAssist = await AssistenteSocialService.getByEmail(email);
+    if (existingAssist) throw new AppErrosCustom("Este email já está cadastrado", 400);
 
     const hashPass = await hashPassword(password);
     const assistData = {
@@ -59,173 +23,55 @@ export default class AssistenteSocialController {
       adminId: req.userId,
     };
 
-    try {
-      const existingAssist = await AssistenteSocialService.getByEmail(email);
-      if (existingAssist) {
-        res.status(400).json("Este email já está cadastrado");
-        return;
-      }
-      const newAssist = await AssistenteSocialService.createAssistenteSocial(
-        assistData
-      );
-      res.status(201).json(newAssist);
-    } catch (err) {
-      console.error(err);
-      res.status(400).json("Erro ao cadastrar assistente!");
-    }
+    const newAssist = await AssistenteSocialService.createAssistenteSocial(assistData);
+    const { password: _password, ...safeAssist } = newAssist.toJSON();
+    res.status(201).json(safeAssist);
   };
 
-  /**
-   * @openapi
-   * /assistentes:
-   *   get:
-   *     summary: Listar todos os assistentes sociais
-   *     tags:
-   *       - Assistentes Sociais
-   *     responses:
-   *       200:
-   *         description: Lista de assistentes retornada com sucesso
-   *       500:
-   *         description: Erro ao buscar assistentes
-   */
   static getAllAssistentes: RequestHandler = async (
     req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      const assistentes = await AssistenteSocialService.getAllAssistentes();
-      res.status(200).json(assistentes);
-    } catch (err) {
-      next(err); // manda para exceptionsVerify
-    }
+    res: Response
+  ): Promise<void> => {
+    const ownUuid = req.userRole === "admin" ? undefined : req.userId;
+    const assistentes = await AssistenteSocialService.getAllAssistentes(ownUuid);
+    res.status(200).json(assistentes);
   };
 
-  /**
-   * @openapi
-   * /assistentes/{id}:
-   *   get:
-   *     summary: Buscar assistente social por ID
-   *     tags:
-   *       - Assistentes Sociais
-   *     parameters:
-   *       - name: id
-   *         in: path
-   *         required: true
-   *         schema:
-   *           type: string
-   *     responses:
-   *       200:
-   *         description: Assistente social encontrado
-   *       400:
-   *         description: ID não informado
-   *       404:
-   *         description: Assistente social não encontrado
-   */
   static getAssistById: RequestHandler = async (
     req: Request,
     res: Response
-  ) => {
+  ): Promise<void> => {
     const { id } = req.params;
-    if (!id) {
-      res.status(400).json("O ID do assistente social não foi identificado");
-    }
-
-    try {
-      const assistente = await AssistenteSocialService.getById(id);
-      res.status(200).json(assistente);
-    } catch (err) {
-      console.error(err);
-      res.status(400).json("Erro ao buscar assistente social");
-    }
+    const assistente = await AssistenteSocialService.getById(id);
+    if (!assistente) throw new AppErrosCustom("Assistente social não encontrado", 404);
+    assertOwnership(req, assistente.uuid, "Você só pode acessar o próprio perfil.");
+    res.status(200).json(assistente);
   };
 
-  /**
-   * @openapi
-   * /assistentes/{id}:
-   *   put:
-   *     summary: Editar assistente social
-   *     tags:
-   *       - Assistentes Sociais
-   *     parameters:
-   *       - name: id
-   *         in: path
-   *         required: true
-   *         schema:
-   *           type: string
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/json:
-   *           schema:
-   *             type: object
-   *             properties:
-   *               nome:
-   *                 type: string
-   *               telefone:
-   *                 type: string
-   *               email:
-   *                 type: string
-   *     responses:
-   *       200:
-   *         description: Assistente social editado com sucesso
-   *       400:
-   *         description: Erro ao editar
-   */
-  static editAssist: RequestHandler = async (req: Request, res: Response) => {
+  static editAssist: RequestHandler = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
-    if (!id) {
-      res.status(400).json("O ID do assistente social não foi identificado");
-    }
+    const updateData = { ...req.body };
 
-    try {
-      const assistente = await AssistenteSocialService.editAssistById(
-        id,
-        req.body
-      );
-      res.status(200).json(assistente);
-    } catch (err) {
-      console.error(err);
-      res.status(400).json("Erro ao editar assistente social");
-    }
-  };
-
-  /**
-   * @openapi
-   * /assistentes/{id}:
-   *   delete:
-   *     summary: Deletar assistente social por ID
-   *     tags:
-   *       - Assistentes Sociais
-   *     parameters:
-   *       - name: id
-   *         in: path
-   *         required: true
-   *         schema:
-   *           type: string
-   *     responses:
-   *       200:
-   *         description: Assistente social deletado com sucesso
-   *       404:
-   *         description: Assistente não encontrado
-   *       400:
-   *         description: Erro ao deletar
-   */
-  static deleteAssist: RequestHandler = async (req: Request, res: Response) => {
-    const { id } = req.params;
-    if (!id) {
-      res.status(400).json("O ID do assistente social não foi identificado");
-    }
-
-    try {
-      const deleted = await AssistenteSocialService.deleteAssistById(id);
-      if (!deleted) {
-        res.status(404).json("Assistente social não encontrado");
+    if (updateData.email) {
+      const sameEmail = await AssistenteSocialService.getByEmail(updateData.email);
+      if (sameEmail && sameEmail.uuid !== id) {
+        throw new AppErrosCustom("Este email já está cadastrado", 400);
       }
-      res.status(200).json("Assistente social deletado com sucesso");
-    } catch (err) {
-      console.error(err);
-      res.status(400).json("Erro ao deletar assistente social");
     }
+
+    if (updateData.password) {
+      updateData.password = await hashPassword(updateData.password);
+    }
+
+    const assistente = await AssistenteSocialService.editAssistById(id, updateData);
+    if (!assistente) throw new AppErrosCustom("Assistente social não encontrado", 404);
+    res.status(200).json(assistente);
+  };
+
+  static deleteAssist: RequestHandler = async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    const deleted = await AssistenteSocialService.deleteAssistById(id);
+    if (!deleted) throw new AppErrosCustom("Assistente social não encontrado", 404);
+    res.status(200).json("Assistente social deletado com sucesso");
   };
 }

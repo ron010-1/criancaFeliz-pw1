@@ -29,6 +29,15 @@ export class Visita extends Model<Visita> {
     @Column(DataType.STRING)
     estimulo_familiar!: string;
 
+    @Column({
+        type: DataType.GEOMETRY('POINT', 4326),
+        allowNull: true
+    })
+    location!: {
+        type: 'Point';
+        coordinates: [number, number];
+    } | null;
+
     //chave estrangeira
     @ForeignKey(() => AssistenteSocial)
     @Column(DataType.STRING)

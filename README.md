@@ -53,36 +53,29 @@ O servidor estará disponível em:
 http://localhost:3333/
 ```
 
-## Conexão com Docker
+## ⚙️ Variáveis de Ambiente
 
-Você precisa estar rodando o postgres e o pgadmin4, crie um banco com nome ao seu critério, quando criar o banco abra o
-query tool e rode :
+Copie o arquivo `.env.example` para `.env` e preencha os valores:
+
+| Variável | Descrição | Padrão |
+|---|---|---|
+| `PORT` | Porta em que o servidor sobe | `3333` |
+| `DATABASE_URL` | String de conexão do Postgres (ex.: banco do Supabase) | — (obrigatório) |
+| `JWT_SECRET` | Segredo usado para assinar os tokens JWT | — (obrigatório) |
+| `JWT_EXPIRES` | Tempo de expiração do token (ex.: `1h`) | — (obrigatório) |
+| `ADMIN_EMAIL` | Email do admin padrão criado automaticamente na inicialização | `admin@admin.com` |
+| `ADMIN_PASSWORD` | Senha do admin padrão criado automaticamente na inicialização | `adminpass` |
+
+```bash
+cp .env.example .env
+```
+
+## Conexão com o banco
+
+Você precisa de um Postgres com a extensão **PostGIS** habilitada (usado no campo de localização do beneficiário). Após criar o banco, abra o Query Tool (ou psql) e rode:
 
 ```bash
 CREATE EXTENSION postgis;
 ```
 
-Após isso atualize suas envs de acordo com o .env.example
-
-Ou utilize o docker-compose, com o comando:
-
-```bash
-docker-compose up -d
-```
-
-Habilite a extensão PostGIS
-Acesse o pgAdmin pelo navegador: http://localhost:8080
-
-Login:
-
-Email: admin@admin.com
-
-Senha: admin
-
-Conecte-se ao banco projectpw (usuário: postgres, senha: postgres).
-
-Abra o Query Tool e rode:
-
-```bash
-CREATE EXTENSION postgis;
-```
+Depois, atualize `DATABASE_URL` no seu `.env` apontando para esse banco.

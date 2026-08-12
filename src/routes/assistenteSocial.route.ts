@@ -1,6 +1,10 @@
 import { Router } from 'express';
 import AssistenteSocialController from '../controller/assisenteSocial.controller';
 import { verifyToken } from '../middlewares/verifyJwt.middleware';
+import { verifyRole } from '../middlewares/verifyRole.middleware';
+import { validate } from '../middlewares/validate.middleware';
+import { idParamSchema } from '../schemas/idParam.schema';
+import { assistenteSocialCreateSchema, assistenteSocialUpdateSchema } from '../schemas/assistenteSocial.schema';
 
 const AssistenteRouter = Router();
 AssistenteRouter.use(verifyToken);
@@ -20,38 +24,28 @@ AssistenteRouter.use(verifyToken);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *               - telefone
- *               - nome
- *             properties:
- *               email:
- *                 type: string
- *                 example: "assistente@email.com"
- *               password:
- *                 type: string
- *                 example: "123456"
- *               telefone:
- *                 type: string
- *                 example: "(83) 99999-1111"
- *               nome:
- *                 type: string
- *                 example: "Maria Silva"
+ *             $ref: '#/components/schemas/AssistenteSocialInput'
  *     responses:
  *       201:
  *         description: Assistente social criado com sucesso
  *       400:
  *         description: Erro ao cadastrar assistente
+ *       403:
+ *         description: Acesso negado (somente admin)
  */
-AssistenteRouter.post('/', verifyToken, AssistenteSocialController.createAssistenteSocial);
+AssistenteRouter.post(
+  '/',
+  validate(assistenteSocialCreateSchema),
+  verifyRole('admin'),
+  AssistenteSocialController.createAssistenteSocial
+);
 
 /**
  * @openapi
  * /assists:
  *   get:
- *     summary: Listar todos os assistentes sociais
+ *     summary: Listar assistentes sociais
+ *     description: Admin vê todos os assistentes sociais. Assistente social vê apenas o próprio perfil.
  *     tags:
  *       - Assistentes Sociais
  *     security:
@@ -62,13 +56,14 @@ AssistenteRouter.post('/', verifyToken, AssistenteSocialController.createAssiste
  *       500:
  *         description: Erro ao buscar assistentes
  */
-AssistenteRouter.get('/', verifyToken, AssistenteSocialController.getAllAssistentes);
+AssistenteRouter.get('/', AssistenteSocialController.getAllAssistentes);
 
 /**
  * @openapi
  * /assists/{id}:
  *   get:
  *     summary: Buscar assistente social por ID
+ *     description: Admin pode buscar qualquer assistente. Assistente social só pode buscar o próprio perfil (id igual ao seu).
  *     tags:
  *       - Assistentes Sociais
  *     security:
@@ -83,10 +78,12 @@ AssistenteRouter.get('/', verifyToken, AssistenteSocialController.getAllAssisten
  *     responses:
  *       200:
  *         description: Assistente social encontrado
- *       400:
- *         description: ID não informado
+ *       403:
+ *         description: Você só pode acessar o próprio perfil
+ *       404:
+ *         description: Assistente social não encontrado
  */
-AssistenteRouter.get('/:id', verifyToken, AssistenteSocialController.getAssistById);
+AssistenteRouter.get('/:id', validate(idParamSchema, 'params'), AssistenteSocialController.getAssistById);
 
 /**
  * @openapi
@@ -107,18 +104,24 @@ AssistenteRouter.get('/:id', verifyToken, AssistenteSocialController.getAssistBy
  *     responses:
  *       200:
  *         description: Assistente social deletado com sucesso
- *       400:
- *         description: ID não informado
+ *       403:
+ *         description: Acesso negado (somente admin)
  *       404:
  *         description: Assistente social não encontrado
  */
-AssistenteRouter.delete('/:id', verifyToken, AssistenteSocialController.deleteAssist);
+AssistenteRouter.delete(
+  '/:id',
+  validate(idParamSchema, 'params'),
+  verifyRole('admin'),
+  AssistenteSocialController.deleteAssist
+);
 
 /**
  * @openapi
  * /assists/{id}:
  *   patch:
  *     summary: Editar assistente social por ID
+ *     description: Admin pode editar qualquer assistente social. Assistente social só pode editar o próprio perfil (id igual ao seu).
  *     tags:
  *       - Assistentes Sociais
  *     security:
@@ -152,7 +155,16 @@ AssistenteRouter.delete('/:id', verifyToken, AssistenteSocialController.deleteAs
  *         description: Assistente social editado com sucesso
  *       400:
  *         description: Erro ao editar assistente
+ *       403:
+ *         description: Acesso negado (admin pode editar qualquer assistente; assistente social só pode editar o próprio perfil)
+ *       404:
+ *         description: Assistente social não encontrado
  */
-AssistenteRouter.patch('/:id', verifyToken, AssistenteSocialController.editAssist);
+AssistenteRouter.patch(
+  '/:id',
+  validate(idParamSchema, 'params'),
+  validate(assistenteSocialUpdateSchema),
+  AssistenteSocialController.editAssist
+);
 
 export default AssistenteRouter;
